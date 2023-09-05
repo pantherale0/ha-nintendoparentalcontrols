@@ -14,7 +14,8 @@ from .const import DOMAIN
 from .coordinator import NintendoUpdateCoordinator, Authenticator, NintendoParental
 
 PLATFORMS: list[Platform] = [
-    Platform.SENSOR
+    Platform.SENSOR,
+    Platform.SWITCH
 ]
 
 
@@ -22,7 +23,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
     hass.data.setdefault(DOMAIN, {})
     nintendo_auth = await Authenticator.complete_login(None, entry.data["session_token"], True)
-    coord = NintendoUpdateCoordinator(hass, entry.data["update_interval"], nintendo_auth)
+    update_interval = entry.data["update_interval"]
+    if entry.options:
+        update_interval = entry.options.get("update_interval")
+    coord = NintendoUpdateCoordinator(hass, update_interval, nintendo_auth)
     # request first data sync
     await coord.async_request_refresh()
     hass.data[DOMAIN][entry.entry_id] = coord

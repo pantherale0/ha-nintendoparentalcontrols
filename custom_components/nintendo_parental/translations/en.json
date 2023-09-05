@@ -14,5 +14,25 @@
             "connection": "Unable to connect to the server.",
             "unknown": "Unknown error occurred."
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "description": "Update Nintendo Switch Parental Controls configuration",
+                "data": {
+                    "update_interval": "Update interval (seconds)"
+                }
+            },
+            "reauth": {
+                "description": "Reauthenticate with Nintendo Online service."
+            },
+            "post": {
+                "description":"Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
+                "data": {
+                    "session_token": "Session token",
+                    "update_interval": "Update interval (seconds)"
+                }
+            }
+        }
     }
 }

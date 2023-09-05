@@ -1,24 +1,33 @@
 """Adds config flow for Blueprint."""
 from __future__ import annotations
+from typing import Any
 
+from urllib.parse import quote
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.components import http
 from homeassistant.components.http.view import HomeAssistantView
-from urllib.parse import quote
-
+from pynintendoparental import Authenticator
 from aiohttp import web_response
 
-from .const import DOMAIN, MIDDLEWARE_URL, AUTH_CALLBACK_PATH, AUTH_CALLBACK_NAME
+from .const import DOMAIN, MIDDLEWARE_URL, AUTH_CALLBACK_PATH, AUTH_CALLBACK_NAME, NAME
 
-from pynintendoparental import Authenticator
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Blueprint."""
 
     VERSION = 1
     AUTH = None
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+            config_entry: config_entries.ConfigEntry
+    ) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)
 
     async def async_step_user(
         self,
@@ -42,7 +51,9 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         forward_url = f"{hass_url}{AUTH_CALLBACK_PATH}?flow_id={self.flow_id}"
         auth_url = MIDDLEWARE_URL.format(
             NAV=quote(self.AUTH.login_url, safe=""),
-            RETURN=forward_url
+            RETURN=forward_url,
+            TITLE=quote("Nintendo OAuth Redirection"),
+            INFO=quote(f"This request has come from your Home Assistant instance to setup {NAME}")
         )
         return self.async_external_step(step_id="obtain_token", url=auth_url)
 
@@ -73,6 +84,36 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 "session_token": user_input["session_token"],
                 "update_interval": user_input["update_interval"]
             }
+        )
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.FlowResult:
+        if user_input is not None:
+            return self.async_create_entry(
+                title=self.config_entry.title,
+                data={
+                    "session_token": self.config_entry.data["session_token"],
+                    "update_interval": user_input["update_interval"]
+                }
+            )
+
+        update_interval = self.config_entry.data["update_interval"]
+        if self.config_entry.options:
+            update_interval = self.config_entry.options.get("update_interval")
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("update_interval", default=update_interval): int
+                }
+            )
         )
 
 class MiddlewareCallbackView(HomeAssistantView):

@@ -10,9 +10,10 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 
 **This integration will set up the following platforms.**
 
-| Platform | Description                        |
-| -------- | ---------------------------------- |
-| `sensor` | Show per device screen time usage. |
+| Platform | Description                                    |
+| -------- | ---------------------------------------------- |
+| `sensor` | Show per device screen time usage.             |
+| `switch` | Override switch to enable or disable a device. |
 
 ## Installation
 
@@ -32,11 +33,19 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 1. The configuration flow should then show some additional options, don't adjust the first box as this is the session token that will be used to refresh the tokens in the background
 1. Click `Submit`
 
+## Middleware notes
+
+The middleware to return the OAuth response back to Home Assistant is located as a static file on one of my own servers (available at static.system32.uk)
+
+The file contains no callbacks to any other 3rd party services, all it does is open a new window in your browser taking you to the Nintendo login site. After _you_ provide the response URL into the text box, the button simply creates a required URL in the background and navigates your web browser back. Home Assistant is then responsible for closing the window.
+
+This "middleware" will only ever be used during the initial account linking process, afterwards a session token that is collected by HA will be used (which you will see in the config flow).
+
 ## Configuration is done in the UI
 
 <!---->
 
-No options are currently available for this integration
+Currently only configuration of the update interval is supported. Future versions will allow you to re-authenticate with the Nintendo Online Service.
 
 ## Contributions are welcome!
 
