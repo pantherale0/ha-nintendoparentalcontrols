@@ -1,5 +1,5 @@
 colorlog==6.7.0
 homeassistant==2023.2.0
 pip>=21.0,<23.2
-ruff==0.0.267
+ruff==0.0.287
 pynintendoparental==0.0.2
