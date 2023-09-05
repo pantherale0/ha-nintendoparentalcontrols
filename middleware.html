@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nintendo OAuth Redirection</title>
+    </head>
+    <body onload="process_load()">
+        <script>
+            function process_load(){
+                let url = new URL(window.location.href)
+                let params = url.searchParams
+                // set return_url
+                if (params.get("return_url")) {
+                    document.getElementById("return_url").value = params.get("return_url")
+                }
+                // set navigate_url
+                if (params.get("nav_url")) {
+                    var popup;
+                    popup = window.open(params.get("nav_url"))
+                    window.onbeforeunload = function() {
+                        if(popup) popup.close();
+                    }
+                }
+            }
+            function return_to_hass(){
+                let redir = document.getElementById("return_url").value
+                let token = document.getElementById("response_token").value
+                let url = new URL(redir)
+                url.searchParams.append("token", token)
+                window.location.replace(url)
+            }
+        </script>
+        <!--<input id="navigate_url" readonly/>
+        <button id="navigate" onclick="navigate()">Navigate to URL</button>
+        <br>
+        <br>-->
+        <label>Response URL: </label>
+        <input id="response_token"/>
+        <input hidden id="return_url" readonly>
+        <br>
+        <br>
+        <button id="response" onclick="return_to_hass()">Return back to Home Assistant</button>
+    </body>
+</html>

@@ -1,11 +1,11 @@
 {
     "config": {
         "step": {
-            "user": {
-                "description": "If you need help with the configuration have a look here: https://github.com/ludeeus/integration_blueprint",
+            "configure": {
+                "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
                 "data": {
-                    "username": "Username",
-                    "password": "Password"
+                    "session_token": "Session token",
+                    "update_interval": "Update interval (seconds)"
                 }
             }
         },
