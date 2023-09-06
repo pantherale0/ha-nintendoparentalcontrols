@@ -36,7 +36,7 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
     @property
     def native_value(self) -> float:
         """Return the native value of the sensor."""
-        return self._device.get_date_summary()[0].get("playingTime")/60
+        return self._device.today_playing_time/60
 
     @property
     def native_unit_of_measurement(self) -> str:

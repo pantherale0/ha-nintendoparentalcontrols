@@ -8,8 +8,8 @@
   "documentation": "https://github.com/pantherale0/ha-nintendoparentalcontrols",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/pantherale0/ha-nintendoparentalcontrols/issues",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "requirements": [
-    "pynintendoparental==0.0.2"
+    "pynintendoparental==0.0.3"
   ]
 }
