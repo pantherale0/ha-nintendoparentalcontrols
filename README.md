@@ -12,8 +12,15 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 
 | Platform | Description                                    |
 | -------- | ---------------------------------------------- |
-| `sensor` | Show per device screen time usage.             |
-| `switch` | Override switch to enable or disable a device. |
+| `sensor` | Read only states (such as current screen time) |
+| `switch` | Device controls.                               |
+
+## Supported features
+
+- Sensor for used screen time
+- Screen time sensor displays last 5 days of usage, including applications used and players.
+- Switch to enable/disable the "Suspend Software" mode once the screentime limit has been reached.
+- Switch to "lock"/"unlock" the device (providing "Suspend Software Limit" is turned on)
 
 ## Installation
 

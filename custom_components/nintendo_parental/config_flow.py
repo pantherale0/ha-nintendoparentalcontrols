@@ -19,7 +19,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Blueprint."""
 
     VERSION = 1
-    AUTH = None
+    auth = None
 
     @staticmethod
     @callback
@@ -36,7 +36,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle a flow initialized by the user."""
         if not user_input:
             # Start an auth flow
-            self.AUTH = Authenticator.generate_login()
+            self.auth = Authenticator.generate_login()
             return await self.async_step_nintendo_website_auth()
         return await self.async_show_form(step_id="user")
 
@@ -50,7 +50,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         forward_url = f"{hass_url}{AUTH_CALLBACK_PATH}?flow_id={self.flow_id}"
         auth_url = MIDDLEWARE_URL.format(
-            NAV=quote(self.AUTH.login_url, safe=""),
+            NAV=quote(self.auth.login_url, safe=""),
             RETURN=forward_url,
             TITLE=quote("Nintendo OAuth Redirection"),
             INFO=quote(f"This request has come from your Home Assistant instance to setup {NAME}")
@@ -63,23 +63,23 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             raise RuntimeError("No current request in context")
         if (token := req.query.get("token")) is None:
             raise RuntimeError("No token returned")
-        await self.AUTH.complete_login(self.AUTH, token, False)
+        await self.auth.complete_login(self.auth, token, False)
         return self.async_external_step_done(next_step_id="configure")
 
     async def async_step_configure(self, user_input=None):
         """Handles the configuration section."""
         schema = {
-            vol.Required("session_token", default=self.AUTH._session_token): str,
+            vol.Required("session_token", default=self.auth._session_token): str,
             vol.Required("update_interval", default=60): int
         }
         return self.async_show_form(step_id="complete", data_schema=vol.Schema(schema))
 
     async def async_step_complete(self, user_input=None):
         """Completion step"""
-        if self.AUTH.account_id is None:
+        if self.auth.account_id is None:
             raise RuntimeError("Init not completed, account_id is null.")
         return self.async_create_entry(
-            title=self.AUTH.account_id,
+            title=self.auth.account_id,
             data={
                 "session_token": user_input["session_token"],
                 "update_interval": user_input["update_interval"]

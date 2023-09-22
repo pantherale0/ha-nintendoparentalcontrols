@@ -21,7 +21,6 @@ async def async_setup_entry(hass, entry, async_add_devices):
         )
     async_add_devices(entities, True)
 
-
 class NintendoDeviceSensor(NintendoDevice, SensorEntity):
     """nintendo_parental Sensor class."""
 
@@ -36,7 +35,7 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
     @property
     def native_value(self) -> float:
         """Return the native value of the sensor."""
-        return self._device.today_playing_time/60
+        return self._device.today_playing_time
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -48,7 +47,8 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
-        return {"daily": self._device.daily_summaries}
+        # limited to 5 days to prevent HA recorder issues
+        return {"daily": self._device.daily_summaries[0:5]}
 
     @property
     def name(self) -> str | None:

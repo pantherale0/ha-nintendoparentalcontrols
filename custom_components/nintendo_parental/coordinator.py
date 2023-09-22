@@ -11,9 +11,8 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from pynintendoparental import NintendoParental, Api, Authenticator
+from pynintendoparental import NintendoParental, Authenticator
 
 from .const import DOMAIN, LOGGER
 
@@ -48,4 +47,5 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
             async with async_timeout.timeout(50):
                 return await self.api.update()
         except Exception as err:
+            LOGGER.error(err)
             raise UpdateFailed from err
