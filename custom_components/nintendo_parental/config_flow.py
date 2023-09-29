@@ -67,7 +67,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_external_step_done(next_step_id="configure")
 
     async def async_step_configure(self, user_input=None):
-        """Handles the configuration section."""
+        """Handle configuration request."""
         schema = {
             vol.Required("session_token", default=self.auth._session_token): str,
             vol.Required("update_interval", default=60): int
@@ -75,7 +75,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="complete", data_schema=vol.Schema(schema))
 
     async def async_step_complete(self, user_input=None):
-        """Completion step"""
+        """Completion step."""
         if self.auth.account_id is None:
             raise RuntimeError("Init not completed, account_id is null.")
         return self.async_create_entry(
@@ -87,6 +87,8 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Option Flow Handler."""
+
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
@@ -94,6 +96,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.FlowResult:
+        """First step."""
+
         if user_input is not None:
             return self.async_create_entry(
                 title=self.config_entry.title,

@@ -31,25 +31,30 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
     ) -> None:
         """Initialize the sensor class."""
         super().__init__(coordinator, device_id, "screentime")
+        self._attr_should_poll = True # allow native value to be polled.
 
     @property
     def native_value(self) -> float:
         """Return the native value of the sensor."""
-        return self._device.today_playing_time
+        return self._device.daily_summaries[0].get("playingTime", 0) / 60
 
     @property
     def native_unit_of_measurement(self) -> str:
+        """Return unit of measurement."""
         return "min"
 
     @property
     def device_class(self) -> SensorDeviceClass | None:
+        """Return device class."""
         return SensorDeviceClass.DURATION
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        """Return extra state attributes."""
         # limited to 5 days to prevent HA recorder issues
         return {"daily": self._device.daily_summaries[0:5]}
 
     @property
     def name(self) -> str | None:
+        """Return entity name."""
         return "Used Screen Time"

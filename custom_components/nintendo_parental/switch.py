@@ -55,22 +55,27 @@ class DeviceOverrideSwitch(NintendoDevice, SwitchEntity):
 
     @property
     def name(self) -> str:
+        """Return entity name."""
         return "Block Device Access"
 
     @property
     def is_on(self) -> bool:
+        """Return entity state."""
         return self._device.limit_time == 0
 
     @property
     def device_class(self) -> SwitchDeviceClass | None:
+        """Return device class."""
         return SwitchDeviceClass.SWITCH
 
     async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn on."""
         self._old_state = self._device.limit_time
         await self._device.update_max_daily_playtime(0)
         return await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn off."""
         if self._old_state == 0:
             _LOGGER.warning(SW_OVERRIDE_LIMIT_INVALID)
             # defaulting to 180 minutes
@@ -81,6 +86,7 @@ class DeviceOverrideSwitch(NintendoDevice, SwitchEntity):
 
 class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
     """A configuration switch."""
+
     def __init__(
         self,
         coordinator,
@@ -95,18 +101,22 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
 
     @property
     def name(self) -> str:
+        """Return entity name."""
         return self._config.get("name")
 
     @property
     def icon(self) -> str:
+        """Return entity icon."""
         return self._config.get("icon")
 
     @property
     def device_class(self) -> SwitchDeviceClass | None:
+        """Return device class."""
         return SwitchDeviceClass.SWITCH
 
     @property
     def is_on(self) -> bool | None:
+        """Return entity state."""
         if self._config_item == "restriction_mode":
             return self._device.parental_control_settings["playTimerRegulations"]["restrictionMode"] == "FORCED_TERMINATION"
 

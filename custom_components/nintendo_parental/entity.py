@@ -5,7 +5,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 import homeassistant.helpers.device_registry as dr
 
-from .const import DOMAIN, NAME, VERSION
+from .const import DOMAIN
 from .coordinator import NintendoUpdateCoordinator
 
 
@@ -24,11 +24,12 @@ class NintendoDevice(CoordinatorEntity):
 
     @property
     def _device(self):
-        """Returns the device"""
+        """Return the device."""
         return [x for x in self.coordinator.api.devices if x.device_id == self._device_id][0]
 
     @property
     def unique_id(self) -> str | None:
+        """Return unique ID."""
         return f"nintendoparental_{self._device_id}_{self._entity_id}"
 
     @property
