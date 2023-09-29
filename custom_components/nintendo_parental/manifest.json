@@ -1,6 +1,7 @@
 {
   "domain": "nintendo_parental",
   "name": "Nintendo Switch Parental Controls",
+  "after_dependencies": ["http"],
   "codeowners": [
     "@pantherale0"
   ],
