@@ -2,6 +2,8 @@
 """Constants for integration_blueprint."""
 from logging import Logger, getLogger
 
+from homeassistant.components.sensor import SensorDeviceClass
+
 LOGGER: Logger = getLogger(__package__)
 
 NAME = "Nintendo Switch Parental Controls"
@@ -29,4 +31,15 @@ SW_CONFIGURATION_ENTITIES = {
         "name": "Block Device Access",
         "value": "limit_time",
     },
+}
+
+SENSOR_CONFIGURATION_ENTITIES = {
+    "screentime": {
+        "icon": None,
+        "name": "Used Screen Time",
+        "native_value": "playing_time",
+        "device_class": SensorDeviceClass.DURATION,
+        "native_unit_of_measurement": "min",
+        "state_attributes": "daily_summaries",
+    }
 }
