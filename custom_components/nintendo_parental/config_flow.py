@@ -1,8 +1,10 @@
+# pylint: disable=unused-argument
 """Adds config flow for Blueprint."""
 from __future__ import annotations
 from typing import Any
 
 from urllib.parse import quote
+import os
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -12,7 +14,16 @@ from homeassistant.components.http.view import HomeAssistantView
 from pynintendoparental import Authenticator
 from aiohttp import web_response
 
-from .const import DOMAIN, MIDDLEWARE_URL, AUTH_CALLBACK_PATH, AUTH_CALLBACK_NAME, NAME
+from .const import (
+    DOMAIN,
+    MIDDLEWARE_URL,
+    AUTH_CALLBACK_PATH,
+    AUTH_CALLBACK_NAME,
+    NAME,
+    AUTH_MIDDLEWARE_PATH,
+    AUTH_MIDDLEWARE_NAME,
+    AUTH_MIDDLEWARE_CONTENT,
+)
 
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -24,7 +35,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(
-            config_entry: config_entries.ConfigEntry
+        config_entry: config_entries.ConfigEntry,
     ) -> config_entries.OptionsFlow:
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
@@ -37,6 +48,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if not user_input:
             # Start an auth flow
             self.auth = Authenticator.generate_login()
+            self.hass.http.register_view(MiddlewareServerView)
             return await self.async_step_nintendo_website_auth()
         return await self.async_show_form(step_id="user")
 
@@ -50,10 +62,13 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         forward_url = f"{hass_url}{AUTH_CALLBACK_PATH}?flow_id={self.flow_id}"
         auth_url = MIDDLEWARE_URL.format(
+            HASS=hass_url,
             NAV=quote(self.auth.login_url, safe=""),
             RETURN=forward_url,
             TITLE=quote("Nintendo OAuth Redirection"),
-            INFO=quote(f"This request has come from your Home Assistant instance to setup {NAME}")
+            INFO=quote(
+                f"This request has come from your Home Assistant instance to setup {NAME}"
+            ),
         )
         return self.async_external_step(step_id="obtain_token", url=auth_url)
 
@@ -70,7 +85,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle configuration request."""
         schema = {
             vol.Required("session_token", default=self.auth._session_token): str,
-            vol.Required("update_interval", default=60): int
+            vol.Required("update_interval", default=60): int,
         }
         return self.async_show_form(step_id="complete", data_schema=vol.Schema(schema))
 
@@ -82,9 +97,10 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             title=self.auth.account_id,
             data={
                 "session_token": user_input["session_token"],
-                "update_interval": user_input["update_interval"]
-            }
+                "update_interval": user_input["update_interval"],
+            },
         )
+
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Option Flow Handler."""
@@ -103,8 +119,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 title=self.config_entry.title,
                 data={
                     "session_token": self.config_entry.data["session_token"],
-                    "update_interval": user_input["update_interval"]
-                }
+                    "update_interval": user_input["update_interval"],
+                },
             )
 
         update_interval = self.config_entry.data["update_interval"]
@@ -114,11 +130,28 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
-                {
-                    vol.Required("update_interval", default=update_interval): int
-                }
-            )
+                {vol.Required("update_interval", default=update_interval): int}
+            ),
         )
+
+
+class MiddlewareServerView(HomeAssistantView):
+    """Serve the static html content for the middleware controller."""
+
+    url = AUTH_MIDDLEWARE_PATH
+    name = AUTH_MIDDLEWARE_NAME
+    requires_auth = False
+
+    async def get(self, request):
+        """Receive get request to serve content."""
+
+        return web_response.Response(
+            headers={"content-type": "text/html"},
+            text=open(
+                AUTH_MIDDLEWARE_CONTENT.format(CWD=os.getcwd()), encoding="utf-8"
+            ).read(),
+        )
+
 
 class MiddlewareCallbackView(HomeAssistantView):
     """Handle callback from external auth."""
@@ -136,5 +169,5 @@ class MiddlewareCallbackView(HomeAssistantView):
 
         return web_response.Response(
             headers={"content-type": "text/html"},
-            text="<script>window.close()</script>Success! This window can be closed"
+            text="<script>window.close()</script>Success! This window can be closed",
         )
