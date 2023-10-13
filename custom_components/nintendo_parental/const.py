@@ -43,3 +43,8 @@ SENSOR_CONFIGURATION_ENTITIES = {
         "state_attributes": "daily_summaries",
     }
 }
+
+ISSUE_DEPENDANCY_ID = "nintendo_parental_dependancy"
+ISSUE_DEPENDANCY_KEY = "dependancy_needs_updating"
+
+GH_REPO_URL = "https://github.com/pantherale0/ha-nintendoparentalcontrols"

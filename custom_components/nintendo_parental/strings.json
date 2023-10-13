@@ -1,0 +1,8 @@
+{
+    "issues": {
+        "dependancy_needs_updating": {
+            "title": "Mobile application has been updated",
+            "description": "A change has occured to the OAuth authentication method used by the Nintendo Switch Parental Controls mobile app.\n\nThis issue is not resolvable, please use the learn more link to report this issue to the maintainer."
+        }
+    }
+}
