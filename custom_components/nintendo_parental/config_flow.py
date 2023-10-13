@@ -148,7 +148,7 @@ class MiddlewareServerView(HomeAssistantView):
         return web_response.Response(
             headers={"content-type": "text/html"},
             text=open(
-                AUTH_MIDDLEWARE_CONTENT.format(CWD=os.getcwd()), "r", encoding="utf-8"
+                AUTH_MIDDLEWARE_CONTENT.format(CWD=os.getcwd()), encoding="utf-8"
             ).read(),
         )
 
