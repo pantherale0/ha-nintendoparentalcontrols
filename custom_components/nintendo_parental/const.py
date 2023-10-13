@@ -1,12 +1,13 @@
 # pylint: disable=line-too-long
-"""Constants for integration_blueprint."""
+"""Constants for nintendo_parental."""
 from logging import Logger, getLogger
+
+from homeassistant.components.sensor import SensorDeviceClass
 
 LOGGER: Logger = getLogger(__package__)
 
 NAME = "Nintendo Switch Parental Controls"
 DOMAIN = "nintendo_parental"
-VERSION = "0.0.4"
 
 MIDDLEWARE_URL = (
     "{HASS}/auth/nintendo?return_url={RETURN}&nav_url={NAV}&title={TITLE}&info={INFO}"
@@ -24,5 +25,21 @@ SW_CONFIGURATION_ENTITIES = {
         "icon": "mdi:block-helper",
         "name": "Suspend Software Limit",
         "value": "parental_control_settings",
+    },
+    "override": {
+        "icon": "mdi:block-helper",
+        "name": "Block Device Access",
+        "value": "limit_time",
+    },
+}
+
+SENSOR_CONFIGURATION_ENTITIES = {
+    "screentime": {
+        "icon": None,
+        "name": "Used Screen Time",
+        "native_value": "playing_time",
+        "device_class": SensorDeviceClass.DURATION,
+        "native_unit_of_measurement": "min",
+        "state_attributes": "daily_summaries",
     }
 }

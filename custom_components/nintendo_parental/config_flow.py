@@ -1,5 +1,5 @@
 # pylint: disable=unused-argument
-"""Adds config flow for Blueprint."""
+"""Adds config flow for nintendo_parental."""
 from __future__ import annotations
 from typing import Any
 
@@ -27,7 +27,7 @@ from .const import (
 
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+    """Config flow for nintendo_parental."""
 
     VERSION = 1
     auth = None

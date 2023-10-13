@@ -1,4 +1,4 @@
-"""DataUpdateCoordinator for integration_blueprint."""
+"""DataUpdateCoordinator for nintendo_parental."""
 from __future__ import annotations
 
 from datetime import timedelta
@@ -23,10 +23,7 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
     config_entry: ConfigEntry
 
     def __init__(
-        self,
-        hass: HomeAssistant,
-        update_interval: int,
-        authenticator: Authenticator
+        self, hass: HomeAssistant, update_interval: int, authenticator: Authenticator
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -39,7 +36,8 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         self.api: NintendoParental = NintendoParental(
             auth=authenticator,
             timezone=hass.config.time_zone,
-            lang=hass.config.language)
+            lang=hass.config.language,
+        )
 
     async def _async_update_data(self):
         """Request the API to update."""

@@ -1,8 +1,4 @@
-"""Custom integration to integrate integration_blueprint with Home Assistant.
-
-For more details about this integration, please refer to
-https://github.com/ludeeus/integration_blueprint
-"""
+"""Custom integration to integrate nintendo_parental with Home Assistant."""
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
@@ -12,16 +8,15 @@ from homeassistant.core import HomeAssistant
 from .const import DOMAIN
 from .coordinator import NintendoUpdateCoordinator, Authenticator
 
-PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
-    Platform.SWITCH
-]
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
     hass.data.setdefault(DOMAIN, {})
-    nintendo_auth = await Authenticator.complete_login(None, entry.data["session_token"], True)
+    nintendo_auth = await Authenticator.complete_login(
+        None, entry.data["session_token"], True
+    )
     update_interval = entry.data["update_interval"]
     if entry.options:
         update_interval = entry.options.get("update_interval")
@@ -34,6 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
     return True
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
