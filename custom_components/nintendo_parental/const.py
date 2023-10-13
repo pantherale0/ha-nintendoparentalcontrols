@@ -6,7 +6,6 @@ LOGGER: Logger = getLogger(__package__)
 
 NAME = "Nintendo Switch Parental Controls"
 DOMAIN = "nintendo_parental"
-VERSION = "0.0.4"
 
 MIDDLEWARE_URL = (
     "{HASS}/auth/nintendo?return_url={RETURN}&nav_url={NAV}&title={TITLE}&info={INFO}"
