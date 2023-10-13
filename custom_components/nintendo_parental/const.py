@@ -1,5 +1,5 @@
 # pylint: disable=line-too-long
-"""Constants for integration_blueprint."""
+"""Constants for nintendo_parental."""
 from logging import Logger, getLogger
 
 from homeassistant.components.sensor import SensorDeviceClass
