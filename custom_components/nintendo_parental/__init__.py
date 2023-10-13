@@ -4,6 +4,7 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .const import DOMAIN
 from .coordinator import NintendoUpdateCoordinator, Authenticator
@@ -14,9 +15,12 @@ PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH]
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
     hass.data.setdefault(DOMAIN, {})
-    nintendo_auth = await Authenticator.complete_login(
-        None, entry.data["session_token"], True
-    )
+    try:
+        nintendo_auth = await Authenticator.complete_login(
+            None, entry.data["session_token"], True
+        )
+    except Exception as err:
+        raise ConfigEntryAuthFailed from err
     update_interval = entry.data["update_interval"]
     if entry.options:
         update_interval = entry.options.get("update_interval")
