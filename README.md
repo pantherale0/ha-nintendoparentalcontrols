@@ -21,6 +21,9 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 - Screen time sensor displays last 5 days of usage, including applications used and players.
 - Switch to enable/disable the "Suspend Software" mode once the screentime limit has been reached.
 - Switch to "lock"/"unlock" the device (providing "Suspend Software Limit" is turned on)
+- Switch to enable and disable alarms for the current day, Nintendo resets this back at midnight.
+- Raises issues if an error occures with the OAuth configuration (such as Nintendo changing the client IDs)
+- Allows for reauthentication if the session token expires (usually around 2 years).
 
 ## Installation
 
@@ -42,17 +45,15 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 
 ## Middleware notes
 
-The middleware to return the OAuth response back to Home Assistant is located as a static file on one of my own servers (available at static.system32.uk)
+The middleware to return the OAuth response back to Home Assistant is a static html file that Home Assistant will register as an HTTP view.
 
-The file contains no callbacks to any other 3rd party services, all it does is open a new window in your browser taking you to the Nintendo login site. After _you_ provide the response URL into the text box, the button simply creates a required URL in the background and navigates your web browser back. Home Assistant is then responsible for closing the window.
-
-This "middleware" will only ever be used during the initial account linking process, afterwards a session token that is collected by HA will be used (which you will see in the config flow).
+The file contains no callbacks to any 3rd party services, all it does is open a new window in your browser taking you to the Nintendo login site. After _you_ provide the response URL into the text box, the button simply creates a required URL in the background and navigates your web browser back. Home Assistant is then responsible for closing the window.
 
 ## Configuration is done in the UI
 
 <!---->
 
-Currently only configuration of the update interval is supported. Future versions will allow you to re-authenticate with the Nintendo Online Service.
+Currently only configuration of the update interval is supported.
 
 ## Contributions are welcome!
 
