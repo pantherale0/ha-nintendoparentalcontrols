@@ -1,5 +1,6 @@
 """Custom integration to integrate nintendo_parental with Home Assistant."""
 from __future__ import annotations
+import contextlib
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -26,7 +27,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             None, entry.data["session_token"], True
         )
     except InvalidSessionTokenException as err:
-        raise ConfigEntryAuthFailed from err
+        raise ConfigEntryAuthFailed(err) from err
     except InvalidOAuthConfigurationException as err:
         ir.create_issue(
             hass,
@@ -37,14 +38,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             translation_key=ISSUE_DEPENDANCY_KEY,
             learn_more_url=GH_REPO_URL,
         )
-        raise ConfigEntryError from err
+        raise ConfigEntryError(err) from err
 
-    # check if an issue exists for ISSUE_DEPENDANCY_ID
-    issue = await ir.async_get(hass).async_get_issue(
-        domain=DOMAIN, issue_id=ISSUE_DEPENDANCY_ID
-    )
-    if issue is not None:
-        await ir.async_delete_issue(hass, DOMAIN, ISSUE_DEPENDANCY_ID)
+    with contextlib.suppress(TypeError):
+        # check if an issue exists for ISSUE_DEPENDANCY_ID
+        issue = await ir.async_get(hass).async_get_issue(
+            domain=DOMAIN, issue_id=ISSUE_DEPENDANCY_ID
+        )
+        if issue is not None:
+            await ir.async_delete_issue(hass, DOMAIN, ISSUE_DEPENDANCY_ID)
 
     update_interval = entry.data["update_interval"]
     if entry.options:

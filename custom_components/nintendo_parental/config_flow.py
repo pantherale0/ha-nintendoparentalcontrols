@@ -12,6 +12,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.components import http
 from homeassistant.components.http.view import HomeAssistantView
+from homeassistant.config_entries import ConfigFlow, ConfigEntry
 from homeassistant.data_entry_flow import FlowResult
 from pynintendoparental import Authenticator
 from aiohttp import web_response
@@ -28,12 +29,12 @@ from .const import (
 )
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for nintendo_parental."""
 
     VERSION = 1
     auth = None
-    _reauth_unique_id = None
+    reauth_entry: ConfigEntry | None = None
 
     @staticmethod
     @callback
@@ -79,7 +80,6 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if not user_input:
             # Start an auth flow
             self.auth = Authenticator.generate_login()
-            self.hass.http.register_view(MiddlewareServerView)
             return await self.async_step_nintendo_website_auth()
         return await self.async_show_form(step_id="user")
 
@@ -87,12 +87,14 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input=None, reauth_flow=False
     ):
         """Begin external auth flow with Nintendo via middleware site."""
-        self.hass.http.register_view(MiddlewareCallbackView)
-        if reauth_flow:
-            return self.async_external_step(
-                step_id="reauth_obtain_token", url=self.auth_url
-            )
-        return self.async_external_step(step_id="obtain_token", url=self.auth_url)
+        if http.current_request.get() is not None:
+            self.hass.http.register_view(MiddlewareServerView)
+            self.hass.http.register_view(MiddlewareCallbackView)
+            if reauth_flow:
+                return self.async_external_step(
+                    step_id="reauth_obtain_token", url=self.auth_url
+                )
+            return self.async_external_step(step_id="obtain_token", url=self.auth_url)
 
     async def async_step_obtain_token(self, user_input=None):
         """Obtain token and complete auth after external auth completed."""
@@ -119,21 +121,31 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             },
         )
 
-    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
+    async def async_step_reauth(self, user_input=None) -> FlowResult:
         """Handle reauth."""
-        self._reauth_unique_id = self.context["unique_id"]
-        return self.async_step_nintendo_website_auth(reauth_flow=True)
+        self.auth = Authenticator.generate_login()
+        self.reauth_entry = self.hass.config_entries.async_get_entry(
+            self.context["entry_id"]
+        )
+        return self.async_show_form(step_id="reauth_login")
+
+    async def async_step_reauth_login(self, user_input=None):
+        """Handle reauth login."""
+        return await self.async_step_nintendo_website_auth(reauth_flow=True)
 
     async def async_step_reauth_obtain_token(self, user_input=None):
         """Obtain token and update configuration."""
-        await self._obtain_token()
-        existing_entry = await self.async_set_unique_id(self._reauth_unique_id)
-        self.hass.config_entries.async_update_entry(
-            existing_entry,
-            data={**existing_entry.data, "session_token": self.auth._session_token},
-        )
-        await self.hass.config_entries.async_reload(existing_entry.entry_id)
-        return self.async_abort(reason="reauth_successful")
+        if self.reauth_entry:
+            await self._obtain_token()
+            self.hass.config_entries.async_update_entry(
+                self.reauth_entry,
+                data={
+                    **self.reauth_entry.data,
+                    "session_token": self.auth._session_token,
+                },
+            )
+            await self.hass.config_entries.async_reload(self.reauth_entry.entry_id)
+            return self.async_abort(reason="reauth_successful")
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):

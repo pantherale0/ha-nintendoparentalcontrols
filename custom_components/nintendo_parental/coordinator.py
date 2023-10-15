@@ -46,4 +46,4 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
                 return await self.api.update()
         except Exception as err:
             LOGGER.error(err)
-            raise UpdateFailed from err
+            raise UpdateFailed(err) from err
