@@ -1,7 +1,6 @@
 # pylint: disable=unused-argument
 """Adds config flow for nintendo_parental."""
 from __future__ import annotations
-from collections.abc import Mapping
 from typing import Any
 
 from urllib.parse import quote
