@@ -1,5 +1,6 @@
 """DataUpdateCoordinator for nintendo_parental."""
 from __future__ import annotations
+import contextlib
 
 from datetime import timedelta
 
@@ -7,12 +8,17 @@ import async_timeout
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
 
 from pynintendoparental import NintendoParental, Authenticator
+from pynintendoparental.exceptions import (
+    InvalidSessionTokenException,
+    InvalidOAuthConfigurationException,
+)
 
 from .const import DOMAIN, LOGGER
 
@@ -42,8 +48,12 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Request the API to update."""
         try:
-            async with async_timeout.timeout(50):
-                return await self.api.update()
+            with contextlib.suppress(InvalidSessionTokenException):
+                async with async_timeout.timeout(50):
+                    return await self.api.update()
+        except InvalidOAuthConfigurationException as err:
+            LOGGER.error(err)
+            raise ConfigEntryAuthFailed(err) from err
         except Exception as err:
             LOGGER.error(err)
-            raise UpdateFailed from err
+            raise UpdateFailed(err) from err

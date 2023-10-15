@@ -65,20 +65,15 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
     def is_on(self) -> bool | None:
         """Return entity state."""
         if self._config_item == "restriction_mode":
-            return (
-                self._device.parental_control_settings["playTimerRegulations"][
-                    "restrictionMode"
-                ]
-                == "FORCED_TERMINATION"
-            )
-        if self._config_item == "limit_time":
+            return self._device.forced_termination_mode
+        if self._config_item == "override":
             return self._device.limit_time == 0
 
     async def async_turn_on(self, **kwargs) -> None:
         """Enable forced termination mode."""
         if self._config_item == "restriction_mode":
             await self._device.set_restriction_mode(RestrictionMode.FORCED_TERMINATION)
-        if self._config_item == "limit_time":
+        if self._config_item == "override":
             self._old_state = self._device.limit_time
             await self._device.update_max_daily_playtime(0)
         return await self.coordinator.async_request_refresh()
@@ -87,7 +82,7 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
         """Enable alarm mode."""
         if self._config_item == "restriction_mode":
             await self._device.set_restriction_mode(RestrictionMode.ALARM)
-        if self._config_item == "limit_time":
+        if self._config_item == "override":
             if self._old_state == 0:
                 _LOGGER.warning(SW_OVERRIDE_LIMIT_INVALID)
                 # defaulting to 180 minutes

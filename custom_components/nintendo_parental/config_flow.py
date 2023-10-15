@@ -11,6 +11,8 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.components import http
 from homeassistant.components.http.view import HomeAssistantView
+from homeassistant.config_entries import ConfigFlow, ConfigEntry
+from homeassistant.data_entry_flow import FlowResult
 from pynintendoparental import Authenticator
 from aiohttp import web_response
 
@@ -26,11 +28,12 @@ from .const import (
 )
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for nintendo_parental."""
 
     VERSION = 1
     auth = None
+    reauth_entry: ConfigEntry | None = None
 
     @staticmethod
     @callback
@@ -40,21 +43,9 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
 
-    async def async_step_user(
-        self,
-        user_input: dict | None = None,
-    ) -> config_entries.FlowResult:
-        """Handle a flow initialized by the user."""
-        if not user_input:
-            # Start an auth flow
-            self.auth = Authenticator.generate_login()
-            self.hass.http.register_view(MiddlewareServerView)
-            return await self.async_step_nintendo_website_auth()
-        return await self.async_show_form(step_id="user")
-
-    async def async_step_nintendo_website_auth(self, user_input=None):
-        """Begin external auth flow with Nintendo via middleware site."""
-        self.hass.http.register_view(MiddlewareCallbackView)
+    @property
+    def auth_url(self) -> str:
+        """Return the full authentication URL."""
         if (req := http.current_request.get()) is None:
             raise RuntimeError("No current request in context")
         if (hass_url := req.headers.get("HA-Frontend-Base")) is None:
@@ -70,15 +61,43 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 f"This request has come from your Home Assistant instance to setup {NAME}"
             ),
         )
-        return self.async_external_step(step_id="obtain_token", url=auth_url)
+        return auth_url
 
-    async def async_step_obtain_token(self, user_input=None):
-        """Obtain token and complete auth after external auth completed."""
+    async def _obtain_token(self):
+        """Generate authentication token."""
         if (req := http.current_request.get()) is None:
             raise RuntimeError("No current request in context")
         if (token := req.query.get("token")) is None:
             raise RuntimeError("No token returned")
         await self.auth.complete_login(self.auth, token, False)
+
+    async def async_step_user(
+        self,
+        user_input: dict | None = None,
+    ) -> config_entries.FlowResult:
+        """Handle a flow initialized by the user."""
+        if not user_input:
+            # Start an auth flow
+            self.auth = Authenticator.generate_login()
+            return await self.async_step_nintendo_website_auth()
+        return await self.async_show_form(step_id="user")
+
+    async def async_step_nintendo_website_auth(
+        self, user_input=None, reauth_flow=False
+    ):
+        """Begin external auth flow with Nintendo via middleware site."""
+        if http.current_request.get() is not None:
+            self.hass.http.register_view(MiddlewareServerView)
+            self.hass.http.register_view(MiddlewareCallbackView)
+            if reauth_flow:
+                return self.async_external_step(
+                    step_id="reauth_obtain_token", url=self.auth_url
+                )
+            return self.async_external_step(step_id="obtain_token", url=self.auth_url)
+
+    async def async_step_obtain_token(self, user_input=None):
+        """Obtain token and complete auth after external auth completed."""
+        await self._obtain_token()
         return self.async_external_step_done(next_step_id="configure")
 
     async def async_step_configure(self, user_input=None):
@@ -100,6 +119,32 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 "update_interval": user_input["update_interval"],
             },
         )
+
+    async def async_step_reauth(self, user_input=None) -> FlowResult:
+        """Handle reauth."""
+        self.auth = Authenticator.generate_login()
+        self.reauth_entry = self.hass.config_entries.async_get_entry(
+            self.context["entry_id"]
+        )
+        return self.async_show_form(step_id="reauth_login")
+
+    async def async_step_reauth_login(self, user_input=None):
+        """Handle reauth login."""
+        return await self.async_step_nintendo_website_auth(reauth_flow=True)
+
+    async def async_step_reauth_obtain_token(self, user_input=None):
+        """Obtain token and update configuration."""
+        if self.reauth_entry:
+            await self._obtain_token()
+            self.hass.config_entries.async_update_entry(
+                self.reauth_entry,
+                data={
+                    **self.reauth_entry.data,
+                    "session_token": self.auth._session_token,
+                },
+            )
+            await self.hass.config_entries.async_reload(self.reauth_entry.entry_id)
+            return self.async_abort(reason="reauth_successful")
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
