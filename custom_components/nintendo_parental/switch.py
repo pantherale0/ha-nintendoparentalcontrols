@@ -8,7 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from pynintendoparental.enum import RestrictionMode
+from pynintendoparental.enum import RestrictionMode, AlarmSettingState
 
 from .coordinator import NintendoUpdateCoordinator
 
@@ -68,6 +68,8 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
             return self._device.forced_termination_mode
         if self._config_item == "override":
             return self._device.limit_time == 0
+        if self._config_item == "alarms_enabled":
+            return self._device.alarms_enabled
 
     async def async_turn_on(self, **kwargs) -> None:
         """Enable forced termination mode."""
@@ -76,6 +78,9 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
         if self._config_item == "override":
             self._old_state = self._device.limit_time
             await self._device.update_max_daily_playtime(0)
+        if self._config_item == "alarms_enabled":
+            self._device.alarms_enabled = True
+            await self._device.set_alarm_state(AlarmSettingState.TO_VISIBLE)
         return await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
@@ -89,4 +94,6 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
                 await self._device.update_max_daily_playtime(180)
             else:
                 await self._device.update_max_daily_playtime(self._old_state)
+        if self._config_item == "alarms_enabled":
+            await self._device.set_alarm_state(AlarmSettingState.TO_INVISIBLE)
         return await self.coordinator.async_request_refresh()

@@ -31,6 +31,11 @@ SW_CONFIGURATION_ENTITIES = {
         "name": "Block Device Access",
         "value": "limit_time",
     },
+    "alarms_enabled": {
+        "icon": "mdi:alarm",
+        "name": "Alarms Enabled Today",
+        "value": "alarms_enabled",
+    },
 }
 
 SENSOR_CONFIGURATION_ENTITIES = {
