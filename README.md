@@ -55,6 +55,8 @@ The file contains no callbacks to any 3rd party services, all it does is open a 
 
 Currently only configuration of the update interval is supported.
 
+Enabling debugging will produce a lot of log entiries.
+
 ## Contributions are welcome!
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
