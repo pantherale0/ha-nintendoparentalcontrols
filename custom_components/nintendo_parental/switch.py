@@ -25,11 +25,12 @@ async def async_setup_entry(
     """Set up Nintendo Switch Parental Control switches."""
     coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    for device in coordinator.api.devices:
-        for config in SW_CONFIGURATION_ENTITIES:
-            entities.append(
-                DeviceConfigurationSwitch(coordinator, device.device_id, config)
-            )
+    if coordinator.api.devices is not None:
+        for device in coordinator.api.devices:
+            for config in SW_CONFIGURATION_ENTITIES:
+                entities.append(
+                    DeviceConfigurationSwitch(coordinator, device.device_id, config)
+                )
     async_add_entities(entities, True)
 
 
