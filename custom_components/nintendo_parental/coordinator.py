@@ -52,8 +52,6 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
                 async with async_timeout.timeout(50):
                     return await self.api.update()
         except InvalidOAuthConfigurationException as err:
-            LOGGER.error(err)
             raise ConfigEntryAuthFailed(err) from err
         except Exception as err:
-            LOGGER.error(err)
             raise UpdateFailed(err) from err
