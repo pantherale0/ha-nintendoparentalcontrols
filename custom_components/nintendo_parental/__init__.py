@@ -16,7 +16,7 @@ from pynintendoparental.exceptions import (
 from .const import DOMAIN, ISSUE_DEPENDANCY_ID, ISSUE_DEPENDANCY_KEY, GH_REPO_URL
 from .coordinator import NintendoUpdateCoordinator, Authenticator
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH]
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH, Platform.TIME]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
