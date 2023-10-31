@@ -79,8 +79,8 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         try:
             with contextlib.suppress(InvalidSessionTokenException):
                 async with async_timeout.timeout(50):
-                    await self.api.update()
-                    await async_device_issue_registry(self, self.hass)
+                    return await self.api.update()
+                    # await async_device_issue_registry(self, self.hass)
         except InvalidOAuthConfigurationException as err:
             raise ConfigEntryAuthFailed(err) from err
         except Exception as err:
