@@ -12,7 +12,7 @@ from pynintendoparental.enum import RestrictionMode, AlarmSettingState
 
 from .coordinator import NintendoUpdateCoordinator
 
-from .const import DOMAIN, SW_OVERRIDE_LIMIT_INVALID, SW_CONFIGURATION_ENTITIES
+from .const import DOMAIN, SW_CONFIGURATION_ENTITIES
 
 from .entity import NintendoDevice
 
@@ -90,9 +90,10 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
             await self._device.set_restriction_mode(RestrictionMode.ALARM)
         if self._config_item == "override":
             if self._old_state == 0:
-                _LOGGER.warning(SW_OVERRIDE_LIMIT_INVALID)
                 # defaulting to 180 minutes
-                await self._device.update_max_daily_playtime(180)
+                await self._device.update_max_daily_playtime(
+                    self.coordinator.default_max_playtime
+                )
             else:
                 await self._device.update_max_daily_playtime(self._old_state)
         if self._config_item == "alarms_enabled":

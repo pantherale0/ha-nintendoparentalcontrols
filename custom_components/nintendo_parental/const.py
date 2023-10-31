@@ -18,8 +18,6 @@ AUTH_MIDDLEWARE_PATH = "/auth/nintendo"
 AUTH_MIDDLEWARE_NAME = "auth:nintendo"
 AUTH_MIDDLEWARE_CONTENT = "{CWD}/custom_components/nintendo_parental/middleware.html"
 
-SW_OVERRIDE_LIMIT_INVALID = "Attempted to disable device block when screentime limit was already 0, defaulting to 180 minutes."
-
 SW_CONFIGURATION_ENTITIES = {
     "restriction_mode": {
         "icon": "mdi:block-helper",
@@ -53,3 +51,6 @@ ISSUE_DEPENDANCY_ID = "nintendo_parental_dependancy"
 ISSUE_DEPENDANCY_KEY = "dependancy_needs_updating"
 
 GH_REPO_URL = "https://github.com/pantherale0/ha-nintendoparentalcontrols"
+
+DEFAULT_MAX_PLAYTIME = 180
+DEFAULT_UPDATE_INTERVAL = 60

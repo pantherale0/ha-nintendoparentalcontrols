@@ -5,8 +5,8 @@
             "description": "A change has occured to the OAuth authentication method used by the Nintendo Switch Parental Controls mobile app.\n\nThis issue is not resolvable, please use the learn more link to report this issue to the maintainer."
         },
         "configuration_error": {
-            "title": "Error setting up a Nintendo device {name}",
-            "description": "There was a problem with the response from Nintendo for this device, check the logs for further information.\n\nGenerally this can occur due to a config issue with the parental control settings.\n\nBefore reporting this issue, make sure that debug mode has been turned on and reload the integration."
+            "title": "Error setting up {name}",
+            "description": "There was a problem with the response from Nintendo for this device, check the logs for further information.\n\nThis can occur due to a config issue with the parental control settings.\n\nBefore reporting this issue, make sure that debug mode has been turned on and reload the integration."
         }
     }
 }

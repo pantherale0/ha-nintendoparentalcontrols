@@ -5,7 +5,8 @@
                 "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
                 "data": {
                     "session_token": "Session token",
-                    "update_interval": "Update interval (seconds)"
+                    "update_interval": "Update interval (seconds)",
+                    "default_max_playtime": "Default maximum play time (minutes)"
                 }
             }
         },
@@ -20,17 +21,19 @@
             "init": {
                 "description": "Update Nintendo Switch Parental Controls configuration",
                 "data": {
-                    "update_interval": "Update interval (seconds)"
+                    "update_interval": "Update interval (seconds)",
+                    "default_max_playtime": "Default maximum play time (minutes)"
                 }
             },
             "reauth": {
                 "description": "Reauthenticate with Nintendo Online service."
             },
             "post": {
-                "description":"Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
+                "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
                 "data": {
                     "session_token": "Session token",
-                    "update_interval": "Update interval (seconds)"
+                    "update_interval": "Update interval (seconds)",
+                    "default_max_playtime": "Default maximum play time (minutes)"
                 }
             }
         }

@@ -48,10 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if issue is not None:
             await ir.async_delete_issue(hass, DOMAIN, ISSUE_DEPENDANCY_ID)
 
-    update_interval = entry.data["update_interval"]
-    if entry.options:
-        update_interval = entry.options.get("update_interval")
-    coord = NintendoUpdateCoordinator(hass, update_interval, nintendo_auth)
+    coord = NintendoUpdateCoordinator(hass, nintendo_auth, entry)
     # request first data sync
     await coord.async_request_refresh()
     hass.data[DOMAIN][entry.entry_id] = coord
