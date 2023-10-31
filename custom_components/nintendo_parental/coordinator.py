@@ -38,6 +38,7 @@ async def async_device_issue_registry(
                 is_persistent=False,
                 severity=ir.IssueSeverity.WARNING,
                 translation_key="configuration_error",
+                translation_placeholders={"name": device.name},
             )
         else:
             with contextlib.suppress(TypeError):
