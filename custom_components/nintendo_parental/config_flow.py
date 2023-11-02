@@ -25,6 +25,8 @@ from .const import (
     AUTH_MIDDLEWARE_PATH,
     AUTH_MIDDLEWARE_NAME,
     AUTH_MIDDLEWARE_CONTENT,
+    DEFAULT_MAX_PLAYTIME,
+    DEFAULT_UPDATE_INTERVAL,
 )
 
 
@@ -103,8 +105,9 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
     async def async_step_configure(self, user_input=None):
         """Handle configuration request."""
         schema = {
-            vol.Required("session_token", default=self.auth._session_token): str,
-            vol.Required("update_interval", default=60): int,
+            vol.Required("session_token", default=self.auth.get_session_token): str,
+            vol.Required("update_interval", default=DEFAULT_UPDATE_INTERVAL): int,
+            vol.Required("default_max_playtime", default=DEFAULT_MAX_PLAYTIME): int,
         }
         return self.async_show_form(step_id="complete", data_schema=vol.Schema(schema))
 
@@ -140,7 +143,7 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
                 self.reauth_entry,
                 data={
                     **self.reauth_entry.data,
-                    "session_token": self.auth._session_token,
+                    "session_token": self.auth.get_session_token,
                 },
             )
             await self.hass.config_entries.async_reload(self.reauth_entry.entry_id)
@@ -165,17 +168,29 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 data={
                     "session_token": self.config_entry.data["session_token"],
                     "update_interval": user_input["update_interval"],
+                    "default_max_playtime": user_input["default_max_playtime"],
                 },
             )
 
+        default_max_playtime = self.config_entry.data.get(
+            "default_max_playtime", DEFAULT_MAX_PLAYTIME
+        )
         update_interval = self.config_entry.data["update_interval"]
         if self.config_entry.options:
             update_interval = self.config_entry.options.get("update_interval")
+            default_max_playtime = self.config_entry.options.get(
+                "default_max_playtime", DEFAULT_MAX_PLAYTIME
+            )
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
-                {vol.Required("update_interval", default=update_interval): int}
+                {
+                    vol.Required("update_interval", default=update_interval): int,
+                    vol.Required(
+                        "default_max_playtime", default=default_max_playtime
+                    ): int,
+                }
             ),
         )
 

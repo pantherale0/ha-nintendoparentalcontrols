@@ -12,7 +12,7 @@ from pynintendoparental.enum import RestrictionMode, AlarmSettingState
 
 from .coordinator import NintendoUpdateCoordinator
 
-from .const import DOMAIN, SW_OVERRIDE_LIMIT_INVALID, SW_CONFIGURATION_ENTITIES
+from .const import DOMAIN, SW_CONFIGURATION_ENTITIES
 
 from .entity import NintendoDevice
 
@@ -25,11 +25,12 @@ async def async_setup_entry(
     """Set up Nintendo Switch Parental Control switches."""
     coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    for device in coordinator.api.devices:
-        for config in SW_CONFIGURATION_ENTITIES:
-            entities.append(
-                DeviceConfigurationSwitch(coordinator, device.device_id, config)
-            )
+    if coordinator.api.devices is not None:
+        for device in coordinator.api.devices:
+            for config in SW_CONFIGURATION_ENTITIES:
+                entities.append(
+                    DeviceConfigurationSwitch(coordinator, device.device_id, config)
+                )
     async_add_entities(entities, True)
 
 
@@ -50,6 +51,11 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
     def name(self) -> str:
         """Return entity name."""
         return self._config.get("name")
+
+    @property
+    def entity_registry_enabled_default(self) -> bool:
+        """Return default enablement state."""
+        return self._config.get("enabled", True)
 
     @property
     def icon(self) -> str:
@@ -89,9 +95,10 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
             await self._device.set_restriction_mode(RestrictionMode.ALARM)
         if self._config_item == "override":
             if self._old_state == 0:
-                _LOGGER.warning(SW_OVERRIDE_LIMIT_INVALID)
                 # defaulting to 180 minutes
-                await self._device.update_max_daily_playtime(180)
+                await self._device.update_max_daily_playtime(
+                    self.coordinator.default_max_playtime
+                )
             else:
                 await self._device.update_max_daily_playtime(self._old_state)
         if self._config_item == "alarms_enabled":
