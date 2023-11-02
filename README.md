@@ -23,7 +23,6 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 - Switch to "lock"/"unlock" the device (providing "Suspend Software Limit" is turned on).
 - Switch to enable and disable alarms for the current day, Nintendo resets this back at midnight.
 - Raises issues if an error occures with the OAuth configuration (such as Nintendo changing the client IDs).
-- Raises issues if there are configuration errors with devices.
 - Raises a configflow to handle reauthentication if the session token expires (usually around 2 years).
 
 ## Installation

@@ -24,34 +24,6 @@ from pynintendoparental.exceptions import (
 from .const import DOMAIN, LOGGER, DEFAULT_MAX_PLAYTIME
 
 
-async def async_device_issue_registry(
-    coord: NintendoUpdateCoordinator, hass: HomeAssistant
-):
-    """Use the issue registry to raise issues for specific switch devices."""
-    for device in coord.api.devices:
-        if device.application_update_failed or device.stats_update_failed:
-            ir.create_issue(
-                hass,
-                DOMAIN,
-                issue_id=device.device_id + "configuration_error",
-                is_fixable=False,
-                is_persistent=False,
-                severity=ir.IssueSeverity.WARNING,
-                translation_key="configuration_error",
-                translation_placeholders={"name": device.name},
-            )
-        else:
-            with contextlib.suppress(TypeError):
-                # check if an issue exists for ISSUE_DEPENDANCY_ID
-                issue = await ir.async_get(hass).async_get_issue(
-                    domain=DOMAIN, issue_id=device.device_id + "configuration_error"
-                )
-                if issue is not None:
-                    await ir.async_delete_issue(
-                        hass, DOMAIN, device.device_id + "configuration_error"
-                    )
-
-
 class NintendoUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
@@ -91,8 +63,7 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         try:
             with contextlib.suppress(InvalidSessionTokenException):
                 async with async_timeout.timeout(50):
-                    await self.api.update()
-                    await async_device_issue_registry(self, self.hass)
+                    return await self.api.update()
         except InvalidOAuthConfigurationException as err:
             raise ConfigEntryAuthFailed(err) from err
         except Exception as err:

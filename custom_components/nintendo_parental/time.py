@@ -1,6 +1,6 @@
 """Time platform for Home Assistant."""
 
-from datetime import time
+from datetime import time, timedelta
 import logging
 
 from homeassistant.components.time import TimeEntity
@@ -39,8 +39,37 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
     @property
     def name(self) -> str:
         """Return entity name."""
-        return "Today Max Screentime"
+        return "Play Time Limit"
+
+    def _value(self) -> time:
+        """Conversion class for time."""
+        return time(
+            int(
+                str(timedelta(minutes=self._device.limit_time)).split(":", maxsplit=1)[
+                    0
+                ]
+            ),
+            int(
+                str(timedelta(minutes=self._device.limit_time)).split(":", maxsplit=2)[
+                    1
+                ]
+            ),
+            0,
+        )
 
     @property
     def native_value(self) -> time | None:
-        return time(0,0,0)
+        """Return the native value."""
+        return self._value()
+
+    async def async_set_value(self, value: time) -> None:
+        """Update the value."""
+        _LOGGER.debug(
+            "Got request to update play time for device %s to %s",
+            self._device_id,
+            value,
+        )
+        minutes = value.hour * 60
+        minutes += value.minute
+        await self._device.update_max_daily_playtime(minutes)
+        await self.coordinator.async_request_refresh()
