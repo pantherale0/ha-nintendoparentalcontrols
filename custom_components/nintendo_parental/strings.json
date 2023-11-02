@@ -8,5 +8,44 @@
             "title": "Error setting up {name}",
             "description": "There was a problem with the response from Nintendo for this device, check the logs for further information.\n\nThis can occur due to a config issue with the parental control settings.\n\nBefore reporting this issue, make sure that debug mode has been turned on and reload the integration."
         }
+    },
+    "config": {
+        "step": {
+            "configure": {
+                "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
+                "data": {
+                    "session_token": "Session token",
+                    "update_interval": "Update interval (seconds)",
+                    "default_max_playtime": "Default maximum play time (minutes)"
+                }
+            }
+        },
+        "error": {
+            "auth": "Username/Password is wrong.",
+            "connection": "Unable to connect to the server.",
+            "unknown": "Unknown error occurred."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "description": "Update Nintendo Switch Parental Controls configuration",
+                "data": {
+                    "update_interval": "Update interval (seconds)",
+                    "default_max_playtime": "Default maximum play time (minutes)"
+                }
+            },
+            "reauth": {
+                "description": "Reauthenticate with Nintendo Online service."
+            },
+            "post": {
+                "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
+                "data": {
+                    "session_token": "Session token",
+                    "update_interval": "Update interval (seconds)",
+                    "default_max_playtime": "Default maximum play time (minutes)"
+                }
+            }
+        }
     }
 }

@@ -53,6 +53,11 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
         return self._config.get("name")
 
     @property
+    def entity_registry_enabled_default(self) -> bool:
+        """Return default enablement state."""
+        return self._config.get("enabled", True)
+
+    @property
     def icon(self) -> str:
         """Return entity icon."""
         return self._config.get("icon")

@@ -28,6 +28,7 @@ SW_CONFIGURATION_ENTITIES = {
         "icon": "mdi:block-helper",
         "name": "Block Device Access",
         "value": "limit_time",
+        "enabled": False
     },
     "alarms_enabled": {
         "icon": "mdi:alarm",
