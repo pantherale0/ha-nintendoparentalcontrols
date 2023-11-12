@@ -43,6 +43,8 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
 
     def _value(self) -> time:
         """Conversion class for time."""
+        if self._device.limit_time is None:
+            return None
         return time(
             int(
                 str(timedelta(minutes=self._device.limit_time)).split(":", maxsplit=1)[
