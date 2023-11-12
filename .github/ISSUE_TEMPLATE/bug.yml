@@ -32,9 +32,9 @@ body:
         - label: I have checked the configuration of the mobile app and the switch device is registered.
           required: true
         - label: I experience this issue if I test again with the tested configuration in the readme.
-          required: true
+          required: false
         - label: This issue does not happen when tested with the tested configuration in the readme.
-          required: true
+          required: false
   - type: textarea
     attributes:
       label: "Describe the issue"
