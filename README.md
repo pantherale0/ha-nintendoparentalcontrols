@@ -38,9 +38,9 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 1. The configuration flow should then show some additional options, don't adjust the first box as this is the session token that will be used to refresh the tokens in the background
 1. Click `Submit`
 
-## Home Assistant Repairs
+<!-- ## Home Assistant Repairs
 
-<!-- In version 2023.11.0 support for HA repairs was introduced as a way to inform you of errors relating to your configuration, the repairs will go away themselves once the error is resolved.
+In version 2023.11.0 support for HA repairs was introduced as a way to inform you of errors relating to your configuration, the repairs will go away themselves once the error is resolved.
 
 Currently two repair types are created, one for OAuth issues, and another for device sync issues.
 
