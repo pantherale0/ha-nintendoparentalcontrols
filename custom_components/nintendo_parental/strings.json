@@ -29,6 +29,14 @@
     "options": {
         "step": {
             "init": {
+                "title": "Nintendo Switch Parental Controls",
+                "menu_options": {
+                    "applications": "Configure applications to register entities",
+                    "config": "Extra options",
+                    "done": "Save and exit"
+                }
+            },
+            "config": {
                 "description": "Update Nintendo Switch Parental Controls configuration",
                 "data": {
                     "update_interval": "Update interval (seconds)",

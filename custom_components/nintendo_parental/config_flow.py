@@ -157,11 +157,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize options flow."""
         self.config_entry = config_entry
 
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.FlowResult:
-        """First step."""
-
+    async def async_step_config(self, user_input: dict[str, Any] | None = None):
+        """Extra options flow."""
         if user_input is not None:
             return self.async_create_entry(
                 title=self.config_entry.title,
@@ -193,6 +190,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 }
             ),
         )
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.FlowResult:
+        """First step."""
 
 
 class MiddlewareServerView(HomeAssistantView):
