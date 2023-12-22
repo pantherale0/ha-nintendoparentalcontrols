@@ -12,7 +12,7 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/pantherale0/ha-nintendoparentalcontrols/issues",
   "requirements": [
-    "pynintendoparental==0.1.12"
+    "pynintendoparental==0.2.0"
   ],
   "version": "2023.12.0b0"
 }
