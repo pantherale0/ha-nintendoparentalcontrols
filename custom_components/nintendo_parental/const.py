@@ -18,6 +18,12 @@ AUTH_MIDDLEWARE_PATH = "/auth/nintendo"
 AUTH_MIDDLEWARE_NAME = "auth:nintendo"
 AUTH_MIDDLEWARE_CONTENT = "{CWD}/custom_components/nintendo_parental/middleware.html"
 
+CONF_APPLICATIONS = "applications"
+CONF_SESSION_TOKEN = "session_token"
+CONF_UPDATE_INTERVAL = "update_interval"
+CONF_DEFAULT_MAX_PLAYTIME = "default_max_playtime"
+
+
 SW_CONFIGURATION_ENTITIES = {
     "restriction_mode": {
         "icon": "mdi:block-helper",
@@ -28,7 +34,7 @@ SW_CONFIGURATION_ENTITIES = {
         "icon": "mdi:block-helper",
         "name": "Block Device Access",
         "value": "limit_time",
-        "enabled": False
+        "enabled": False,
     },
     "alarms_enabled": {
         "icon": "mdi:alarm",

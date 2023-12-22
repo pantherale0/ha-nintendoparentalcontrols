@@ -13,6 +13,7 @@ from homeassistant.components import http
 from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import ConfigFlow, ConfigEntry
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import selector
 from pynintendoparental import Authenticator
 from aiohttp import web_response
 
@@ -27,7 +28,13 @@ from .const import (
     AUTH_MIDDLEWARE_CONTENT,
     DEFAULT_MAX_PLAYTIME,
     DEFAULT_UPDATE_INTERVAL,
+    CONF_UPDATE_INTERVAL,
+    CONF_APPLICATIONS,
+    CONF_DEFAULT_MAX_PLAYTIME,
+    CONF_SESSION_TOKEN,
 )
+
+from .coordinator import NintendoUpdateCoordinator
 
 
 class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
@@ -105,9 +112,9 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
     async def async_step_configure(self, user_input=None):
         """Handle configuration request."""
         schema = {
-            vol.Required("session_token", default=self.auth.get_session_token): str,
-            vol.Required("update_interval", default=DEFAULT_UPDATE_INTERVAL): int,
-            vol.Required("default_max_playtime", default=DEFAULT_MAX_PLAYTIME): int,
+            vol.Required(CONF_SESSION_TOKEN, default=self.auth.get_session_token): str,
+            vol.Required(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): int,
+            vol.Required(CONF_DEFAULT_MAX_PLAYTIME, default=DEFAULT_MAX_PLAYTIME): int,
         }
         return self.async_show_form(step_id="complete", data_schema=vol.Schema(schema))
 
@@ -118,8 +125,8 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_create_entry(
             title=self.auth.account_id,
             data={
-                "session_token": user_input["session_token"],
-                "update_interval": user_input["update_interval"],
+                CONF_SESSION_TOKEN: user_input[CONF_SESSION_TOKEN],
+                CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL],
             },
         )
 
@@ -143,7 +150,7 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
                 self.reauth_entry,
                 data={
                     **self.reauth_entry.data,
-                    "session_token": self.auth.get_session_token,
+                    CONF_SESSION_TOKEN: self.auth.get_session_token,
                 },
             )
             await self.hass.config_entries.async_reload(self.reauth_entry.entry_id)
@@ -157,62 +164,106 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     _update_interval = DEFAULT_UPDATE_INTERVAL
     _default_max_playtime = DEFAULT_MAX_PLAYTIME
     _applications = []
+    _coordinator: NintendoUpdateCoordinator
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
 
+    @property
+    def _get_application_name_list(self) -> list[str]:
+        """Return all applications as a list of names."""
+        apps = []
+        for device in self._coordinator.api.devices:
+            for app in device.applications:
+                if app.application_id not in apps:
+                    apps.append(app.name)
+        return apps
+
+    @property
+    def _get_application_name_list_enabled(self) -> list[str]:
+        """Return list of applications stored in local _applications."""
+        apps = []
+        for device in self._coordinator.api.devices:
+            for app in device.applications:
+                if (
+                    app.application_id not in apps
+                    and app.application_id in self._applications
+                ):
+                    apps.append(app.name)
+        return apps
+
+    def _get_application_id_from_name(self, name: str) -> str:
+        """Return the application ID from a given name."""
+        for device in self._coordinator.api.devices:
+            for app in device.applications:
+                if app.name == name:
+                    return app.application_id
+        return None
+
     async def async_step_config(self, user_input: dict[str, Any] | None = None):
         """Extra options flow."""
         if user_input is not None:
-            self._session_token = self.config_entry.data["session_token"]
-            self._update_interval = user_input["update_interval"]
-            self._default_max_playtime = user_input["default_max_playtime"]
+            self._session_token = self.config_entry.data[CONF_SESSION_TOKEN]
+            self._update_interval = user_input[CONF_UPDATE_INTERVAL]
+            self._default_max_playtime = user_input[CONF_DEFAULT_MAX_PLAYTIME]
             return await self.async_step_init()
 
         default_max_playtime = self.config_entry.data.get(
-            "default_max_playtime", DEFAULT_MAX_PLAYTIME
+            CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
         )
-        update_interval = self.config_entry.data["update_interval"]
+        update_interval = self.config_entry.data[CONF_UPDATE_INTERVAL]
         if self.config_entry.options:
-            update_interval = self.config_entry.options.get("update_interval")
+            update_interval = self.config_entry.options.get(CONF_UPDATE_INTERVAL)
             default_max_playtime = self.config_entry.options.get(
-                "default_max_playtime", DEFAULT_MAX_PLAYTIME
+                CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
             )
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required("update_interval", default=update_interval): int,
+                    vol.Required(CONF_UPDATE_INTERVAL, default=update_interval): int,
                     vol.Required(
-                        "default_max_playtime", default=default_max_playtime
+                        CONF_DEFAULT_MAX_PLAYTIME, default=default_max_playtime
                     ): int,
                 }
             ),
         )
 
-    async def async_step_applications(self, _: dict[str, Any] | None = None):
-        """Initial applications menu."""
-        return self.async_show_menu(
-            step_id="applications",
-            menu_options=[
-                "applications_create",
-                "applications_delete",
-                "applications_update",
-                "done",
-            ],
+    async def async_step_applications(self, user_input: dict[str, Any] | None = None):
+        """Application configuration."""
+        if user_input is not None:
+            self._applications = []
+            for app_name in user_input[CONF_APPLICATIONS]:
+                self._applications.append(self._get_application_id_from_name(app_name))
+            return await self.async_step_init()
+        return self.async_show_form(
+            step_id=CONF_APPLICATIONS,
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_APPLICATIONS, default=[]
+                    ): selector.SelectSelector(
+                        config=selector.SelectSelectorConfig(
+                            mode=selector.SelectSelectorMode.DROPDOWN,
+                            options=self._get_application_name_list,
+                            multiple=True,
+                        )
+                    )
+                }
+            ),
         )
 
     async def async_step_done(self, _: dict[str, Any] | None = None):
-        """Final config step."""
+        """Create or update entry."""
         return self.async_create_entry(
             title=self.config_entry.title,
             data={
-                "session_token": self.config_entry.data["session_token"],
-                "update_interval": self._update_interval,
-                "default_max_playtime": self._default_max_playtime,
-                "applications": self._applications,
+                CONF_SESSION_TOKEN: self.config_entry.data[CONF_SESSION_TOKEN],
+                CONF_UPDATE_INTERVAL: self._update_interval,
+                CONF_DEFAULT_MAX_PLAYTIME: self._default_max_playtime,
+                CONF_APPLICATIONS: self._applications,
             },
         )
 
@@ -220,8 +271,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         self, _: dict[str, Any] | None = None
     ) -> config_entries.FlowResult:
         """First step."""
+        self._coordinator: NintendoUpdateCoordinator = self.hass.data[DOMAIN][
+            self.config_entry.entry_id
+        ]
         return self.async_show_menu(
-            step_id="init", menu_options=["applications", "config", "done"]
+            step_id="init", menu_options=[CONF_APPLICATIONS, "config", "done"]
         )
 
 

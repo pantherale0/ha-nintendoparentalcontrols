@@ -11,7 +11,7 @@ from pynintendoparental.exceptions import (
     InvalidOAuthConfigurationException,
 )
 
-from .const import DOMAIN
+from .const import DOMAIN, CONF_SESSION_TOKEN
 from .coordinator import NintendoUpdateCoordinator, Authenticator
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH, Platform.TIME]
@@ -22,7 +22,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     try:
         nintendo_auth = await Authenticator.complete_login(
-            None, entry.data["session_token"], True
+            None, entry.data[CONF_SESSION_TOKEN], True
         )
     except InvalidSessionTokenException as err:
         raise ConfigEntryAuthFailed(err) from err

@@ -20,7 +20,13 @@ from pynintendoparental.exceptions import (
     InvalidOAuthConfigurationException,
 )
 
-from .const import DOMAIN, LOGGER, DEFAULT_MAX_PLAYTIME
+from .const import (
+    DOMAIN,
+    LOGGER,
+    DEFAULT_MAX_PLAYTIME,
+    CONF_DEFAULT_MAX_PLAYTIME,
+    CONF_UPDATE_INTERVAL,
+)
 
 
 class NintendoUpdateCoordinator(DataUpdateCoordinator):
@@ -33,9 +39,9 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize."""
-        self._update_interval = config_entry.data["update_interval"]
+        self._update_interval = config_entry.data[CONF_UPDATE_INTERVAL]
         if config_entry.options:
-            self.update_interval = config_entry.options.get("update_interval")
+            self.update_interval = config_entry.options.get(CONF_UPDATE_INTERVAL)
         super().__init__(
             hass=hass,
             logger=LOGGER,
@@ -50,11 +56,11 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         )
         self.config_entry: ConfigEntry = config_entry
         self.default_max_playtime = config_entry.data.get(
-            "default_max_playtime", DEFAULT_MAX_PLAYTIME
+            CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
         )
         if config_entry.options:
             self.default_max_playtime = config_entry.options.get(
-                "default_max_playtime", DEFAULT_MAX_PLAYTIME
+                CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
             )
 
     async def _async_update_data(self):

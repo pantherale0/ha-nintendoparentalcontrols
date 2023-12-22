@@ -44,12 +44,9 @@
                 }
             },
             "applications": {
-                "description": "Configure applications to register control entities for.",
-                "menu_options": {
-                    "applications_create": "Add new application",
-                    "applications_update": "Update existing application",
-                    "applications_delete": "Delete application",
-                    "done": "Return to main menu"
+                "description": "Configure applications to register whitelist control entites for.",
+                "data": {
+                    "applications": "App name(s)"
                 }
             },
             "reauth": {

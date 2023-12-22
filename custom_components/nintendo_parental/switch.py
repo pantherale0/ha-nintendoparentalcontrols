@@ -2,6 +2,7 @@
 """Nintendo Switch Parental Controls switch platform."""
 
 import logging
+from typing import Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass
 from homeassistant.config_entries import ConfigEntry
@@ -9,10 +10,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from pynintendoparental.enum import RestrictionMode, AlarmSettingState
+from pynintendoparental.application import Application
 
 from .coordinator import NintendoUpdateCoordinator
 
-from .const import DOMAIN, SW_CONFIGURATION_ENTITIES
+from .const import DOMAIN, SW_CONFIGURATION_ENTITIES, CONF_APPLICATIONS
 
 from .entity import NintendoDevice
 
@@ -31,7 +33,70 @@ async def async_setup_entry(
                 entities.append(
                     DeviceConfigurationSwitch(coordinator, device.device_id, config)
                 )
+            for app_id in entry.options[CONF_APPLICATIONS]:
+                try:
+                    entities.append(
+                        ApplicationWhitelistSwitch(
+                            coordinator=coordinator,
+                            device_id=device.device_id,
+                            app=device.get_application(app_id),
+                        )
+                    )
+                except ValueError:
+                    _LOGGER.debug(
+                        "Ignoring application %s for device %s as it does not exist.",
+                        app_id,
+                        device.device_id,
+                    )
     async_add_entities(entities, True)
+
+
+class ApplicationWhitelistSwitch(NintendoDevice, SwitchEntity):
+    """A configuration switch."""
+
+    def __init__(self, coordinator, device_id, app: Application) -> None:
+        """Initialize the sensor class."""
+        super().__init__(coordinator, device_id, app.application_id)
+        self._app_id = app.application_id
+
+    @property
+    def _application(self) -> Application:
+        """Get the application."""
+        return self._device.get_application(self._app_id)
+
+    @property
+    def name(self) -> str:
+        """Return entity name."""
+        return f"{self._application.name} Whitelisted"
+
+    @property
+    def entity_picture(self) -> str | None:
+        """Return entity picture."""
+        return self._application.image_url
+
+    @property
+    def device_class(self) -> SwitchDeviceClass | None:
+        """Return device class."""
+        return SwitchDeviceClass.SWITCH
+
+    @property
+    def is_on(self) -> bool | None:
+        """Return entity state."""
+        return self._device.whitelisted_applications[self._app_id]
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        """Disable whitelisted mode."""
+        await self._device.set_whitelisted_application(
+            app_id=self._app_id, allowed=False
+        )
+        return await self.coordinator.async_request_refresh()
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        """Enable whitelisted mode."""
+        await self._device.set_whitelisted_application(
+            app_id=self._app_id, allowed=True
+        )
+        return await self.coordinator.async_request_refresh()
 
 
 class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
