@@ -13,7 +13,7 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 | Platform | Description                                    |
 | -------- | ---------------------------------------------- |
 | `sensor` | Read only states (such as current screen time) |
-| `switch` | Basic device controls.                            |
+| `switch` | Per app and device controls                    |
 
 ## Supported features
 
@@ -21,8 +21,10 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 - Screen time sensor displays last 5 days of usage, including applications used and players.
 - Switch to enable/disable the "Suspend Software" mode once the screentime limit has been reached.
 - Switch to enable and disable alarms for the current day, Nintendo resets this back at midnight.
-- Raises issues if an error occures with the OAuth configuration (such as Nintendo changing the client IDs).
-- Raises a configflow to handle reauthentication if the session token expires (usually around 2 years).
+- Time platform to adjust the total amount of time allowed to play in the day, setting this to 0:00 and turning on "Suspend Software Limit" will effectively disable the device unless you enter the parental controls pin
+- Optional switches to control the whitelist state of applications, this needs to be configured from the options menu.
+<!-- - Raises issues if an error occures with the OAuth configuration (such as Nintendo changing the client IDs).
+- Raises a configflow to handle reauthentication if the session token expires (usually around 2 years). -->
 
 ## Installation
 
@@ -55,9 +57,9 @@ If you see this error, you should verify your parental controls configuration in
 | Suspend Software | Enabled or Disabled |
 | Set Days Individually | Off | -->
 
-### Mobile application has been updated
+<!-- ### Mobile application has been updated
 
-This happens if Nintendo has updated the mobile app significantly and the OAuth tokens that are hardcoded into pynintendoparental are out of date. If this happens please log an issue.
+This happens if Nintendo has updated the mobile app significantly and the OAuth tokens that are hardcoded into pynintendoparental are out of date. If this happens please log an issue. -->
 
 ## Middleware notes
 
