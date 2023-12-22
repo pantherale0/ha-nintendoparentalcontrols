@@ -1,4 +1,14 @@
 {
+    "issues": {
+        "dependancy_needs_updating": {
+            "title": "Mobile application has been updated",
+            "description": "A change has occured to the OAuth authentication method used by the Nintendo Switch Parental Controls mobile app.\n\nThis issue is not resolvable, please use the learn more link to report this issue to the maintainer."
+        },
+        "configuration_error": {
+            "title": "Error setting up {name}",
+            "description": "There was a problem with the response from Nintendo for this device, check the logs for further information.\n\nThis can occur due to a config issue with the parental control settings.\n\nBefore reporting this issue, make sure that debug mode has been turned on and reload the integration."
+        }
+    },
     "config": {
         "step": {
             "configure": {
@@ -19,10 +29,27 @@
     "options": {
         "step": {
             "init": {
+                "title": "Nintendo Switch Parental Controls",
+                "menu_options": {
+                    "applications": "Configure applications to register entities",
+                    "config": "Extra options",
+                    "done": "Save and exit"
+                }
+            },
+            "config": {
                 "description": "Update Nintendo Switch Parental Controls configuration",
                 "data": {
                     "update_interval": "Update interval (seconds)",
                     "default_max_playtime": "Default maximum play time (minutes)"
+                }
+            },
+            "applications": {
+                "description": "Configure applications to register control entities for.",
+                "menu_options": {
+                    "applications_create": "Add new application",
+                    "applications_update": "Update existing application",
+                    "applications_delete": "Delete application",
+                    "done": "Return to main menu"
                 }
             },
             "reauth": {

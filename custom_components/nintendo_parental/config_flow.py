@@ -153,6 +153,11 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Option Flow Handler."""
 
+    _session_token = ""
+    _update_interval = DEFAULT_UPDATE_INTERVAL
+    _default_max_playtime = DEFAULT_MAX_PLAYTIME
+    _applications = []
+
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
@@ -160,14 +165,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_config(self, user_input: dict[str, Any] | None = None):
         """Extra options flow."""
         if user_input is not None:
-            return self.async_create_entry(
-                title=self.config_entry.title,
-                data={
-                    "session_token": self.config_entry.data["session_token"],
-                    "update_interval": user_input["update_interval"],
-                    "default_max_playtime": user_input["default_max_playtime"],
-                },
-            )
+            self._session_token = self.config_entry.data["session_token"]
+            self._update_interval = user_input["update_interval"]
+            self._default_max_playtime = user_input["default_max_playtime"]
+            return await self.async_step_init()
 
         default_max_playtime = self.config_entry.data.get(
             "default_max_playtime", DEFAULT_MAX_PLAYTIME
@@ -191,10 +192,37 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             ),
         )
 
+    async def async_step_applications(self, _: dict[str, Any] | None = None):
+        """Initial applications menu."""
+        return self.async_show_menu(
+            step_id="applications",
+            menu_options=[
+                "applications_create",
+                "applications_delete",
+                "applications_update",
+                "done",
+            ],
+        )
+
+    async def async_step_done(self, _: dict[str, Any] | None = None):
+        """Final config step."""
+        return self.async_create_entry(
+            title=self.config_entry.title,
+            data={
+                "session_token": self.config_entry.data["session_token"],
+                "update_interval": self._update_interval,
+                "default_max_playtime": self._default_max_playtime,
+                "applications": self._applications,
+            },
+        )
+
     async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
+        self, _: dict[str, Any] | None = None
     ) -> config_entries.FlowResult:
         """First step."""
+        return self.async_show_menu(
+            step_id="init", menu_options=["applications", "config", "done"]
+        )
 
 
 class MiddlewareServerView(HomeAssistantView):

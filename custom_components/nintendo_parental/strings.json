@@ -43,6 +43,15 @@
                     "default_max_playtime": "Default maximum play time (minutes)"
                 }
             },
+            "applications": {
+                "description": "Configure applications to register control entities for.",
+                "menu_options": {
+                    "applications_create": "Add new application",
+                    "applications_update": "Update existing application",
+                    "applications_delete": "Delete application",
+                    "done": "Return to main menu"
+                }
+            },
             "reauth": {
                 "description": "Reauthenticate with Nintendo Online service."
             },
