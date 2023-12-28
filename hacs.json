@@ -2,7 +2,7 @@
     "name": "Nintendo Switch Parental Controls",
     "filename": "nintendo_parental.zip",
     "hide_default_branch": true,
-    "homeassistant": "2023.12.0",
+    "homeassistant": "2023.12.4",
     "render_readme": true,
     "zip_release": true
 }

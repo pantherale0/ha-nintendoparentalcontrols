@@ -72,14 +72,6 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
         )
         return auth_url
 
-    async def _obtain_token(self):
-        """Generate authentication token."""
-        if (req := http.current_request.get()) is None:
-            raise RuntimeError("No current request in context")
-        if (token := req.query.get("token")) is None:
-            raise RuntimeError("No token returned")
-        await self.auth.complete_login(self.auth, token, False)
-
     async def async_step_user(
         self,
         user_input: dict | None = None,
@@ -88,6 +80,7 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
         if not user_input:
             # Start an auth flow
             self.auth = Authenticator.generate_login()
+            self.hass.http.register_view(MiddlewareServerView)
             return await self.async_step_nintendo_website_auth()
         return await self.async_show_form(step_id="user")
 
@@ -95,14 +88,20 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
         self, user_input=None, reauth_flow=False
     ):
         """Begin external auth flow with Nintendo via middleware site."""
-        if http.current_request.get() is not None:
-            self.hass.http.register_view(MiddlewareServerView)
-            self.hass.http.register_view(MiddlewareCallbackView)
-            if reauth_flow:
-                return self.async_external_step(
-                    step_id="reauth_obtain_token", url=self.auth_url
-                )
-            return self.async_external_step(step_id="obtain_token", url=self.auth_url)
+        self.hass.http.register_view(MiddlewareCallbackView)
+        if reauth_flow:
+            return self.async_external_step(
+                step_id="reauth_obtain_token", url=self.auth_url
+            )
+        return self.async_external_step(step_id="obtain_token", url=self.auth_url)
+
+    async def _obtain_token(self):
+        """Generate authentication token."""
+        if (req := http.current_request.get()) is None:
+            raise RuntimeError("No current request in context")
+        if (token := req.query.get("token")) is None:
+            raise RuntimeError("No token returned")
+        await self.auth.complete_login(self.auth, token, False)
 
     async def async_step_obtain_token(self, user_input=None):
         """Obtain token and complete auth after external auth completed."""

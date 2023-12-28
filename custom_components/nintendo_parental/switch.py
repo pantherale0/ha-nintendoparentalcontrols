@@ -33,7 +33,7 @@ async def async_setup_entry(
                 entities.append(
                     DeviceConfigurationSwitch(coordinator, device.device_id, config)
                 )
-            for app_id in entry.options[CONF_APPLICATIONS]:
+            for app_id in entry.options.get(CONF_APPLICATIONS, []):
                 try:
                     entities.append(
                         ApplicationWhitelistSwitch(
