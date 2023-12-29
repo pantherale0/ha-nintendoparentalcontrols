@@ -16,7 +16,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
     coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
     if coordinator.api.devices is not None:
-        for device in coordinator.api.devices:
+        for device in coordinator.api.devices.values():
             for sensor in SENSOR_CONFIGURATION_ENTITIES:
                 entities.append(
                     NintendoDeviceSensor(coordinator, device.device_id, sensor)
