@@ -173,7 +173,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     def _get_application_name_list(self) -> list[str]:
         """Return all applications as a list of names."""
         apps = []
-        for device in self._coordinator.api.devices:
+        for device in self._coordinator.api.devices.values():
             for app in device.applications:
                 if app.application_id not in apps:
                     apps.append(app.name)
@@ -183,7 +183,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     def _get_application_name_list_enabled(self) -> list[str]:
         """Return list of applications stored in local _applications."""
         apps = []
-        for device in self._coordinator.api.devices:
+        for device in self._coordinator.api.devices.values():
             for app in device.applications:
                 if (
                     app.application_id not in apps
@@ -194,7 +194,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     def _get_application_id_from_name(self, name: str) -> str:
         """Return the application ID from a given name."""
-        for device in self._coordinator.api.devices:
+        for device in self._coordinator.api.devices.values():
             for app in device.applications:
                 if app.name == name:
                     return app.application_id

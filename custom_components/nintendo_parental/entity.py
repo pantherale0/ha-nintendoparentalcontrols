@@ -24,9 +24,7 @@ class NintendoDevice(CoordinatorEntity):
     @property
     def _device(self):
         """Return the device."""
-        return [
-            x for x in self.coordinator.api.devices if x.device_id == self._device_id
-        ][0]
+        return self.coordinator.api.devices[self._device_id]
 
     @property
     def unique_id(self) -> str | None:

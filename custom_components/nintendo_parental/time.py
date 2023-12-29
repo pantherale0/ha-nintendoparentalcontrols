@@ -22,7 +22,7 @@ async def async_setup_entry(
     coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
     if coordinator.api.devices is not None:
-        for device in coordinator.api.devices:
+        for device in coordinator.api.devices.values():
             entities.append(
                 NintendoParentalTimeEntity(
                     coordinator, device.device_id, "today_max_screentime"
