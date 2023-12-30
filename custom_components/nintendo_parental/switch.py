@@ -54,13 +54,12 @@ async def async_setup_entry(
 class ApplicationWhitelistSwitch(NintendoDevice, SwitchEntity):
     """A configuration switch."""
 
+    _attr_should_poll = True
+
     def __init__(self, coordinator, device_id, app: Application) -> None:
         """Initialize the sensor class."""
         super().__init__(coordinator, device_id, app.application_id)
         self._app_id = app.application_id
-        self._assumed_state = (
-            self._device.whitelisted_applications.get(self._app_id, None) is None
-        )
 
     @property
     def _application(self) -> Application:
@@ -90,7 +89,7 @@ class ApplicationWhitelistSwitch(NintendoDevice, SwitchEntity):
     @property
     def assumed_state(self) -> bool:
         """Return true if unable to access whitelisted application."""
-        return self._assumed_state
+        return self._device.whitelisted_applications.get(self._app_id, None) is None
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Disable whitelisted mode."""
