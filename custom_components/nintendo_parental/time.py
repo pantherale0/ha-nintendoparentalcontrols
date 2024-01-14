@@ -42,6 +42,7 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
     def __init__(
         self, coordinator: NintendoUpdateCoordinator, device_id, entity_id
     ) -> None:
+        """Create time entity."""
         self._config = TIME_CONFIGURATION_ENTITIES.get(entity_id)
         super().__init__(coordinator, device_id, entity_id)
 
