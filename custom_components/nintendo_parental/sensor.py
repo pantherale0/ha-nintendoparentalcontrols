@@ -38,6 +38,12 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
         """Return the native value of the sensor."""
         if self._config.get("native_value") == "playing_time":
             return self._device.daily_summaries[0].get("playingTime", 0) / 60
+        if self._config.get("native_value") == "time_remaining":
+            if self._device.limit_time == 0:
+                return 0
+            return self._device.limit_time - (
+                self._device.daily_summaries[0].get("playingTime", 0) / 60
+            )
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -55,6 +61,7 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
         # limited to 5 days to prevent HA recorder issues
         if self._config.get("state_attributes") == "daily_summaries":
             return {"daily": self._device.daily_summaries[0:5]}
+        return None
 
     @property
     def icon(self) -> str | None:

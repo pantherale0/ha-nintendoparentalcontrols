@@ -30,12 +30,6 @@ SW_CONFIGURATION_ENTITIES = {
         "name": "Suspend Software Limit",
         "value": "parental_control_settings",
     },
-    "override": {
-        "icon": "mdi:block-helper",
-        "name": "Block Device Access",
-        "value": "limit_time",
-        "enabled": False,
-    },
     "alarms_enabled": {
         "icon": "mdi:alarm",
         "name": "Alarms Enabled Today",
@@ -51,7 +45,27 @@ SENSOR_CONFIGURATION_ENTITIES = {
         "device_class": SensorDeviceClass.DURATION,
         "native_unit_of_measurement": "min",
         "state_attributes": "daily_summaries",
-    }
+    },
+    "time_remaining": {
+        "icon": None,
+        "name": "Time Remaining",
+        "native_value": "time_remaining",
+        "device_class": SensorDeviceClass.DURATION,
+        "native_unit_of_measurement": "min",
+    },
+}
+
+TIME_CONFIGURATION_ENTITIES = {
+    "today_max_screentime": {
+        "name": "Play Time Limit",
+        "value": "limit_time",
+        "update_method": "update_max_daily_playtime",
+    },
+    "bonus_time": {
+        "name": "Bonus Time",
+        "value": "bonus_time",
+        "update_method": "give_bonus_time",
+    },
 }
 
 ISSUE_DEPENDANCY_ID = "nintendo_parental_dependancy"
