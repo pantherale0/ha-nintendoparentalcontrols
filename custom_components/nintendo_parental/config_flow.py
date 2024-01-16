@@ -3,14 +3,12 @@
 from __future__ import annotations
 from typing import Any
 
-from urllib.parse import quote
 import os
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import CONF_API_TOKEN
-from homeassistant.components import http
 from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import ConfigFlow, ConfigEntry
 from homeassistant.data_entry_flow import FlowResult
@@ -20,10 +18,8 @@ from aiohttp import web_response
 
 from .const import (
     DOMAIN,
-    MIDDLEWARE_URL,
     AUTH_CALLBACK_PATH,
     AUTH_CALLBACK_NAME,
-    NAME,
     AUTH_MIDDLEWARE_PATH,
     AUTH_MIDDLEWARE_NAME,
     AUTH_MIDDLEWARE_CONTENT,
