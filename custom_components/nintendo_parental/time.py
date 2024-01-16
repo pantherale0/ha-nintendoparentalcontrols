@@ -6,6 +6,7 @@ import logging
 from homeassistant.components.time import TimeEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .coordinator import NintendoUpdateCoordinator
@@ -101,6 +102,12 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
             )
             minutes = value.hour * 60
             minutes += value.minute
+            if minutes > 360:
+                raise ServiceValidationError(
+                    "Play Time Limit cannot be more than 6 hours (6:00). To disable, set to 0:00",
+                    translation_domain=DOMAIN,
+                    translation_key="play_time_limit_out_of_range",
+                )
             await self._device.update_max_daily_playtime(minutes)
         if self._config.get("update_method") == "give_bonus_time":
             _LOGGER.debug(
@@ -112,8 +119,15 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
             minutes += value.minute
             await self._device.give_bonus_time(minutes)
         if self._config["update_method"] == "set_bedtime_alarm":
-            if value.hour > 16 and value.hour <= 23:
+            if value.hour >= 16 and value.hour <= 23:
                 await self._device.set_bedtime_alarm(end_time=value, enabled=True)
-            else:
+            elif value.hour == 0 and value.minute == 0:
                 await self._device.set_bedtime_alarm(enabled=False)
+            else:
+                raise ServiceValidationError(
+                    "Bedtime Alarm must be between 16:00 and 23:45. To disable, set to 0:00.",
+                    translation_domain=DOMAIN,
+                    translation_key="bedtime_alarm_out_of_range",
+                    translation_placeholders={"time": value.strftime("%H:%M")},
+                )
         await self.coordinator.async_request_refresh()

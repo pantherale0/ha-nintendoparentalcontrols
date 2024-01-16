@@ -29,27 +29,20 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 
 1. Add repository URL into HACS and install "Nintendo Switch Parental Controls"
 1. Restart Home Assistant
-1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Nintendo Switch Parental Controls"
-1. HA will automatically navigate to a middleware site (see middleware.html in this repository) which will redirect you to Nintendo to login.
-1. After login, you will see a `Linking an External Account` screen, for the account you wish to link, right click on the red button `Select this person` and click `Copy Link`
+1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Nintendo Switch Parental Controls
+1. You will be prompted for an access token, click the link provided in the description of the dialog (this is unique) and login to your Nintendo account.
+1. After login, you will see a `Linking an External Account` screen. For the account you wish to link, right click on the red button `Select this person` and click `Copy Link`
 1. Close the `Nintendo Account` tab
-1. Go back to the `Nintendo OAuth Redirection` tab
-1. Paste the previously copied value into the `Response URL` text box (only text box on the page)
-1. Click `Return back to Home Assistant`
-1. The configuration flow should then show some additional options, don't adjust the first box as this is the session token that will be used to refresh the tokens in the background
+1. Paste the previously copied value into the `Access token` field
 1. Click `Submit`
-
-## Middleware notes
-
-The middleware to return the OAuth response back to Home Assistant is a static html file that Home Assistant will register as an HTTP view.
-
-The file contains no callbacks to any 3rd party services, all it does is open a new window in your browser taking you to the Nintendo login site. After _you_ provide the response URL into the text box, the button simply creates a required URL in the background and navigates your web browser back. Home Assistant is then responsible for closing the window.
+1. The configuration flow should then show some additional options, don't adjust the first box as this is the refresh token that will be used to refresh the access tokens in the background and is retrieved from Nintndo using the token you previously provided.
+1. Click `Submit`
 
 ## Configuration is done in the UI
 
 <!---->
 
-Currently only configuration of the update interval is supported.
+You can configure applications to register entites for within the "CONFIGURE" menu after setting up the integration for the first time.
 
 Enabling debugging will produce a lot of log entiries.
 

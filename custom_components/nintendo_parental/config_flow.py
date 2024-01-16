@@ -9,6 +9,7 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import callback
+from homeassistant.const import CONF_API_TOKEN
 from homeassistant.components import http
 from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import ConfigFlow, ConfigEntry
@@ -52,26 +53,6 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
 
-    @property
-    def auth_url(self) -> str:
-        """Return the full authentication URL."""
-        if (req := http.current_request.get()) is None:
-            raise RuntimeError("No current request in context")
-        if (hass_url := req.headers.get("HA-Frontend-Base")) is None:
-            raise RuntimeError("No header in request")
-
-        forward_url = f"{hass_url}{AUTH_CALLBACK_PATH}?flow_id={self.flow_id}"
-        auth_url = MIDDLEWARE_URL.format(
-            HASS=hass_url,
-            NAV=quote(self.auth.login_url, safe=""),
-            RETURN=forward_url,
-            TITLE=quote("Nintendo OAuth Redirection"),
-            INFO=quote(
-                f"This request has come from your Home Assistant instance to setup {NAME}"
-            ),
-        )
-        return auth_url
-
     async def async_step_user(
         self,
         user_input: dict | None = None,
@@ -80,54 +61,37 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
         if not user_input:
             # Start an auth flow
             self.auth = Authenticator.generate_login()
-            self.hass.http.register_view(MiddlewareServerView)
             return await self.async_step_nintendo_website_auth()
         return await self.async_show_form(step_id="user")
 
-    async def async_step_nintendo_website_auth(
-        self, user_input=None, reauth_flow=False
-    ):
-        """Begin external auth flow with Nintendo via middleware site."""
-        self.hass.http.register_view(MiddlewareCallbackView)
-        if reauth_flow:
-            return self.async_external_step(
-                step_id="reauth_obtain_token", url=self.auth_url
-            )
-        return self.async_external_step(step_id="obtain_token", url=self.auth_url)
-
-    async def _obtain_token(self):
-        """Generate authentication token."""
-        if (req := http.current_request.get()) is None:
-            raise RuntimeError("No current request in context")
-        if (token := req.query.get("token")) is None:
-            raise RuntimeError("No token returned")
-        await self.auth.complete_login(self.auth, token, False)
-
-    async def async_step_obtain_token(self, user_input=None):
-        """Obtain token and complete auth after external auth completed."""
-        await self._obtain_token()
-        return self.async_external_step_done(next_step_id="configure")
+    async def async_step_nintendo_website_auth(self, user_input=None):
+        """Begin auth flow with Nintendo site."""
+        if user_input is not None:
+            await self.auth.complete_login(self.auth, user_input[CONF_API_TOKEN], False)
+            return await self.async_step_configure()
+        return self.async_show_form(
+            step_id="nintendo_website_auth",
+            description_placeholders={"link": self.auth.login_url},
+            data_schema=vol.Schema({vol.Required(CONF_API_TOKEN): str}),
+        )
 
     async def async_step_configure(self, user_input=None):
         """Handle configuration request."""
+        if user_input is not None:
+            if self.auth.account_id is None:
+                raise RuntimeError("Init not completed, account_id is null.")
+            return self.async_create_entry(
+                title=self.auth.account_id,
+                data={
+                    CONF_SESSION_TOKEN: user_input[CONF_SESSION_TOKEN],
+                    CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL],
+                },
+            )
         schema = {
             vol.Required(CONF_SESSION_TOKEN, default=self.auth.get_session_token): str,
             vol.Required(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): int,
-            vol.Required(CONF_DEFAULT_MAX_PLAYTIME, default=DEFAULT_MAX_PLAYTIME): int,
         }
-        return self.async_show_form(step_id="complete", data_schema=vol.Schema(schema))
-
-    async def async_step_complete(self, user_input=None):
-        """Completion step."""
-        if self.auth.account_id is None:
-            raise RuntimeError("Init not completed, account_id is null.")
-        return self.async_create_entry(
-            title=self.auth.account_id,
-            data={
-                CONF_SESSION_TOKEN: user_input[CONF_SESSION_TOKEN],
-                CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL],
-            },
-        )
+        return self.async_show_form(step_id="configure", data_schema=vol.Schema(schema))
 
     async def async_step_reauth(self, user_input=None) -> FlowResult:
         """Handle reauth."""
@@ -139,12 +103,12 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def async_step_reauth_login(self, user_input=None):
         """Handle reauth login."""
-        return await self.async_step_nintendo_website_auth(reauth_flow=True)
+        return await self.async_step_nintendo_website_auth()
 
     async def async_step_reauth_obtain_token(self, user_input=None):
         """Obtain token and update configuration."""
-        if self.reauth_entry:
-            await self._obtain_token()
+        if user_input is not None:
+            await self.auth.complete_login(self.auth, user_input[CONF_API_TOKEN], False)
             self.hass.config_entries.async_update_entry(
                 self.reauth_entry,
                 data={
@@ -154,6 +118,12 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
             )
             await self.hass.config_entries.async_reload(self.reauth_entry.entry_id)
             return self.async_abort(reason="reauth_successful")
+
+        return self.async_show_form(
+            step_id="nintendo_website_auth",
+            description_placeholders={"link": self.auth.login_url},
+            data_schema={vol.Required(CONF_API_TOKEN): str},
+        )
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
@@ -287,7 +257,6 @@ class MiddlewareServerView(HomeAssistantView):
 
     async def get(self, request):
         """Receive get request to serve content."""
-
         return web_response.Response(
             headers={"content-type": "text/html"},
             text=open(
