@@ -69,7 +69,7 @@ class ApplicationWhitelistSwitch(NintendoDevice, SwitchEntity):
     @property
     def name(self) -> str:
         """Return entity name."""
-        return f"{self._application.name} Whitelisted"
+        return f"{self._device.name} {self._application.name} Whitelisted"
 
     @property
     def entity_picture(self) -> str | None:
@@ -122,7 +122,7 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
     @property
     def name(self) -> str:
         """Return entity name."""
-        return self._config.get("name")
+        return self._config.get("name").format(DEV_NAME=self._device.name)
 
     @property
     def entity_registry_enabled_default(self) -> bool:

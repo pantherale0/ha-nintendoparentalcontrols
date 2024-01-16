@@ -27,12 +27,12 @@ CONF_DEFAULT_MAX_PLAYTIME = "default_max_playtime"
 SW_CONFIGURATION_ENTITIES = {
     "restriction_mode": {
         "icon": "mdi:block-helper",
-        "name": "Suspend Software Limit",
+        "name": "{DEV_NAME} Suspend Software Limit",
         "value": "parental_control_settings",
     },
     "alarms_enabled": {
         "icon": "mdi:alarm",
-        "name": "Alarms Enabled Today",
+        "name": "{DEV_NAME} Alarms Enabled Today",
         "value": "alarms_enabled",
     },
 }
@@ -40,7 +40,7 @@ SW_CONFIGURATION_ENTITIES = {
 SENSOR_CONFIGURATION_ENTITIES = {
     "screentime": {
         "icon": None,
-        "name": "Used Screen Time",
+        "name": "{DEV_NAME} Used Screen Time",
         "native_value": "playing_time",
         "device_class": SensorDeviceClass.DURATION,
         "native_unit_of_measurement": "min",
@@ -48,7 +48,7 @@ SENSOR_CONFIGURATION_ENTITIES = {
     },
     "time_remaining": {
         "icon": None,
-        "name": "Time Remaining",
+        "name": "{DEV_NAME} Time Remaining",
         "native_value": "time_remaining",
         "device_class": SensorDeviceClass.DURATION,
         "native_unit_of_measurement": "min",
@@ -57,17 +57,17 @@ SENSOR_CONFIGURATION_ENTITIES = {
 
 TIME_CONFIGURATION_ENTITIES = {
     "today_max_screentime": {
-        "name": "Play Time Limit",
+        "name": "{DEV_NAME} Play Time Limit",
         "value": "limit_time",
         "update_method": "update_max_daily_playtime",
     },
     "bonus_time": {
-        "name": "Bonus Time",
+        "name": "{DEV_NAME} Bonus Time",
         "value": "bonus_time",
         "update_method": "give_bonus_time",
     },
     "bedtime_alarm": {
-        "name": "Bedtime Alarm",
+        "name": "{DEV_NAME} Bedtime Alarm",
         "value": "bedtime",
         "update_method": "set_bedtime_alarm",
     },

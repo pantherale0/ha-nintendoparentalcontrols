@@ -48,7 +48,7 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
     @property
     def name(self) -> str:
         """Return entity name."""
-        return self._config["name"]
+        return self._config["name"].format(DEV_NAME=self._device.name)
 
     def _value(self) -> time:
         """Conversion class for time."""

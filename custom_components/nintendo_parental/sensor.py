@@ -71,4 +71,4 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
     @property
     def name(self) -> str | None:
         """Return entity name."""
-        return self._config.get("name")
+        return self._config.get("name").format(DEV_NAME=self._device.name)
