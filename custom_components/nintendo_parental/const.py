@@ -66,6 +66,11 @@ TIME_CONFIGURATION_ENTITIES = {
         "value": "bonus_time",
         "update_method": "give_bonus_time",
     },
+    "bedtime_alarm": {
+        "name": "Bedtime Alarm",
+        "value": "bedtime",
+        "update_method": "set_bedtime_alarm",
+    },
 }
 
 ISSUE_DEPENDANCY_ID = "nintendo_parental_dependancy"

@@ -23,14 +23,12 @@ async def async_setup_entry(
     entities = []
     if coordinator.api.devices is not None:
         for device in list(coordinator.api.devices.values()):
-            entities.append(
-                NintendoParentalTimeEntity(
-                    coordinator, device.device_id, "today_max_screentime"
+            for entity_config in TIME_CONFIGURATION_ENTITIES:
+                entities.append(
+                    NintendoParentalTimeEntity(
+                        coordinator, device.device_id, entity_config
+                    )
                 )
-            )
-            entities.append(
-                NintendoParentalTimeEntity(coordinator, device.device_id, "bonus_time")
-            )
     async_add_entities(entities, True)
 
 
@@ -85,6 +83,8 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
                 ),
                 0,
             )
+        elif self._config["value"] == "bedtime":
+            return self._device.bedtime_alarm
 
     @property
     def native_value(self) -> time | None:
@@ -102,7 +102,6 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
             minutes = value.hour * 60
             minutes += value.minute
             await self._device.update_max_daily_playtime(minutes)
-            await self.coordinator.async_request_refresh()
         if self._config.get("update_method") == "give_bonus_time":
             _LOGGER.debug(
                 "Got request to add bonus time for device %s to %s",
@@ -112,4 +111,9 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
             minutes = value.hour * 60
             minutes += value.minute
             await self._device.give_bonus_time(minutes)
-            await self.coordinator.async_request_refresh()
+        if self._config["update_method"] == "set_bedtime_alarm":
+            if value.hour > 16 and value.hour <= 23:
+                await self._device.set_bedtime_alarm(end_time=value, enabled=True)
+            else:
+                await self._device.set_bedtime_alarm(enabled=False)
+        await self.coordinator.async_request_refresh()
