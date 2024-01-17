@@ -9,15 +9,6 @@ LOGGER: Logger = getLogger(__package__)
 NAME = "Nintendo Switch Parental Controls"
 DOMAIN = "nintendo_parental"
 
-MIDDLEWARE_URL = (
-    "{HASS}/auth/nintendo?return_url={RETURN}&nav_url={NAV}&title={TITLE}&info={INFO}"
-)
-AUTH_CALLBACK_PATH = "/auth/nintendo/callback"
-AUTH_CALLBACK_NAME = "auth:nintendo:callback"
-AUTH_MIDDLEWARE_PATH = "/auth/nintendo"
-AUTH_MIDDLEWARE_NAME = "auth:nintendo"
-AUTH_MIDDLEWARE_CONTENT = "{CWD}/custom_components/nintendo_parental/middleware.html"
-
 CONF_APPLICATIONS = "applications"
 CONF_SESSION_TOKEN = "session_token"
 CONF_UPDATE_INTERVAL = "update_interval"

@@ -3,26 +3,18 @@
 from __future__ import annotations
 from typing import Any
 
-import os
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import CONF_API_TOKEN
-from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import ConfigFlow, ConfigEntry
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 from pynintendoparental import Authenticator
-from aiohttp import web_response
 
 from .const import (
     DOMAIN,
-    AUTH_CALLBACK_PATH,
-    AUTH_CALLBACK_NAME,
-    AUTH_MIDDLEWARE_PATH,
-    AUTH_MIDDLEWARE_NAME,
-    AUTH_MIDDLEWARE_CONTENT,
     DEFAULT_MAX_PLAYTIME,
     DEFAULT_UPDATE_INTERVAL,
     CONF_UPDATE_INTERVAL,
@@ -241,41 +233,4 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         ]
         return self.async_show_menu(
             step_id="init", menu_options=[CONF_APPLICATIONS, "config", "done"]
-        )
-
-
-class MiddlewareServerView(HomeAssistantView):
-    """Serve the static html content for the middleware controller."""
-
-    url = AUTH_MIDDLEWARE_PATH
-    name = AUTH_MIDDLEWARE_NAME
-    requires_auth = False
-
-    async def get(self, request):
-        """Receive get request to serve content."""
-        return web_response.Response(
-            headers={"content-type": "text/html"},
-            text=open(
-                AUTH_MIDDLEWARE_CONTENT.format(CWD=os.getcwd()), encoding="utf-8"
-            ).read(),
-        )
-
-
-class MiddlewareCallbackView(HomeAssistantView):
-    """Handle callback from external auth."""
-
-    url = AUTH_CALLBACK_PATH
-    name = AUTH_CALLBACK_NAME
-    requires_auth = False
-
-    async def get(self, request):
-        """Receive authorization request."""
-        hass = request.app["hass"]
-        await hass.config_entries.flow.async_configure(
-            flow_id=request.query["flow_id"], user_input=None
-        )
-
-        return web_response.Response(
-            headers={"content-type": "text/html"},
-            text="<script>window.close()</script>Success! This window can be closed",
         )
