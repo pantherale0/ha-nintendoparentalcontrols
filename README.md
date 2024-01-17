@@ -46,6 +46,11 @@ You can configure applications to register entites for within the "CONFIGURE" me
 
 Enabling debugging will produce a lot of log entiries.
 
+## Known issues
+
+- New Nintendo Switch devices (or ones recently enrolled in Nintendo Parental Controls) don't usually provide enough data for the integration to function properly. If you see different errors and warnings such as `Unable to update daily summary for device Switch 1: A summary for the given date 2024-01-01 20:00:00 does not exist` this will resolve itself if left for a period of time once Nintendo has started to collect data from your Switch. See #55
+- Duplicate application names in configuration menu - this is purely cosemtic, the underlying IDs are identical between different consoles.
+
 ## Contributions are welcome!
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
