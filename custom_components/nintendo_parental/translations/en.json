@@ -18,6 +18,12 @@
                     "update_interval": "Update interval (seconds)",
                     "default_max_playtime": "Default maximum play time (minutes)"
                 }
+            },
+            "nintendo_website_auth": {
+                "description": "Click this link [Nintendo Login]({link}) to login to Nintendo and retrieve the access token for the next input.",
+                "data": {
+                    "api_token": "Access token"
+                }
             }
         },
         "error": {
@@ -60,6 +66,14 @@
                     "default_max_playtime": "Default maximum play time (minutes)"
                 }
             }
+        }
+    },
+    "exceptions": {
+        "bedtime_alarm_out_of_range": {
+            "message": "Invalid time provided, expected between 16:00 and 23:59. Got {time}"
+        },
+        "play_time_limit_out_of_range": {
+            "message": "Play Time Limit cannot be more than 6 hours (6:00). To disable, set to 0:00"
         }
     }
 }
