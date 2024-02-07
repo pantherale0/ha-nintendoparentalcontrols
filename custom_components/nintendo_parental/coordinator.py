@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for nintendo_parental."""
+
 from __future__ import annotations
 import contextlib
 
@@ -39,14 +40,16 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize."""
-        self._update_interval = config_entry.data[CONF_UPDATE_INTERVAL]
+        self._config_update_interval = config_entry.data[CONF_UPDATE_INTERVAL]
         if config_entry.options:
-            self.update_interval = config_entry.options.get(CONF_UPDATE_INTERVAL)
+            self._config_update_interval = config_entry.options.get(
+                CONF_UPDATE_INTERVAL
+            )
         super().__init__(
             hass=hass,
             logger=LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=self._update_interval),
+            update_interval=timedelta(seconds=self._config_update_interval),
         )
 
         self.api: NintendoParental = NintendoParental(
@@ -67,7 +70,7 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         """Request the API to update."""
         try:
             with contextlib.suppress(InvalidSessionTokenException):
-                async with async_timeout.timeout(self._update_interval - 5):
+                async with async_timeout.timeout(self._config_update_interval - 5):
                     return await self.api.update()
         except InvalidOAuthConfigurationException as err:
             raise ConfigEntryAuthFailed(err) from err
