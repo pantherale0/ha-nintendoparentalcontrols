@@ -102,13 +102,16 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
             )
             minutes = value.hour * 60
             minutes += value.minute
-            if minutes > 360:
+            if minutes > 360 or (value.hour != 23 and value.minute != 59):
                 raise ServiceValidationError(
                     "Play Time Limit cannot be more than 6 hours (6:00). To disable, set to 0:00",
                     translation_domain=DOMAIN,
                     translation_key="play_time_limit_out_of_range",
                 )
-            await self._device.update_max_daily_playtime(minutes)
+            if value.hour == 23 and value.minute == 59:
+                await self._device.update_max_daily_playtime(minutes=None)
+            else:
+                await self._device.update_max_daily_playtime(minutes)
         if self._config.get("update_method") == "give_bonus_time":
             _LOGGER.debug(
                 "Got request to add bonus time for device %s to %s",
