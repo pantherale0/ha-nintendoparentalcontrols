@@ -16,7 +16,8 @@
                 "data": {
                     "session_token": "Session token",
                     "update_interval": "Update interval (seconds)",
-                    "default_max_playtime": "Default maximum play time (minutes)"
+                    "default_max_playtime": "Default maximum play time (minutes)",
+                    "experimental": "Experimental features"
                 }
             },
             "nintendo_website_auth": {
@@ -46,7 +47,8 @@
                 "description": "Update Nintendo Switch Parental Controls configuration",
                 "data": {
                     "update_interval": "Update interval (seconds)",
-                    "default_max_playtime": "Default maximum play time (minutes)"
+                    "default_max_playtime": "Default maximum play time (minutes)",
+                    "experimental": "Experimental features"
                 }
             },
             "applications": {
@@ -73,7 +75,7 @@
             "message": "Invalid time provided, expected between 16:00 and 23:59. Got {time}"
         },
         "play_time_limit_out_of_range": {
-            "message": "Play Time Limit cannot be more than 6 hours (6:00). To lock the switch, set to 0:00, to disable screen time limits, set to 23:59."
+            "message": "Play Time Limit cannot be more than 6 hours. To lock the switch, set to 0, to disable screen time limits, set to -1."
         }
     }
 }

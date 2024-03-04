@@ -1,6 +1,6 @@
 """Time platform for Home Assistant."""
 
-from datetime import time, timedelta
+from datetime import time
 import logging
 
 from homeassistant.components.time import TimeEntity
@@ -52,39 +52,7 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
 
     def _value(self) -> time:
         """Conversion class for time."""
-        if self._config["value"] == "limit_time":
-            if self._device.limit_time is None:
-                return None
-            return time(
-                int(
-                    str(timedelta(minutes=self._device.limit_time)).split(
-                        ":", maxsplit=1
-                    )[0]
-                ),
-                int(
-                    str(timedelta(minutes=self._device.limit_time)).split(
-                        ":", maxsplit=2
-                    )[1]
-                ),
-                0,
-            )
-        elif self._config["value"] == "bonus_time":
-            if self._device.bonus_time is None:
-                return None
-            return time(
-                int(
-                    str(timedelta(minutes=self._device.bonus_time)).split(
-                        ":", maxsplit=1
-                    )[0]
-                ),
-                int(
-                    str(timedelta(minutes=self._device.bonus_time)).split(
-                        ":", maxsplit=2
-                    )[1]
-                ),
-                0,
-            )
-        elif self._config["value"] == "bedtime":
+        if self._config["value"] == "bedtime":
             return self._device.bedtime_alarm
 
     @property
@@ -94,33 +62,6 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Update the value."""
-        if self._config.get("update_method") == "update_max_daily_playtime":
-            _LOGGER.debug(
-                "Got request to update play time for device %s to %s",
-                self._device_id,
-                value,
-            )
-            minutes = value.hour * 60
-            minutes += value.minute
-            if minutes > 360 or (value.hour != 23 and value.minute != 59):
-                raise ServiceValidationError(
-                    "Play Time Limit cannot be more than 6 hours (6:00). To disable, set to 0:00",
-                    translation_domain=DOMAIN,
-                    translation_key="play_time_limit_out_of_range",
-                )
-            if value.hour == 23 and value.minute == 59:
-                await self._device.update_max_daily_playtime(minutes=None)
-            else:
-                await self._device.update_max_daily_playtime(minutes)
-        if self._config.get("update_method") == "give_bonus_time":
-            _LOGGER.debug(
-                "Got request to add bonus time for device %s to %s",
-                self._device_id,
-                value,
-            )
-            minutes = value.hour * 60
-            minutes += value.minute
-            await self._device.give_bonus_time(minutes)
         if self._config["update_method"] == "set_bedtime_alarm":
             if value.hour >= 16 and value.hour <= 23:
                 await self._device.set_bedtime_alarm(end_time=value, enabled=True)
