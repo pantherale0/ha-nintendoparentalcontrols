@@ -27,6 +27,7 @@ from .const import (
     DEFAULT_MAX_PLAYTIME,
     CONF_DEFAULT_MAX_PLAYTIME,
     CONF_UPDATE_INTERVAL,
+    CONF_EXPERIMENTAL
 )
 
 
@@ -61,9 +62,13 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
         self.default_max_playtime = config_entry.data.get(
             CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
         )
+        self.experimental_mode = config_entry.data.get(CONF_EXPERIMENTAL, False)
         if config_entry.options:
             self.default_max_playtime = config_entry.options.get(
                 CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
+            )
+            self.experimental_mode = config_entry.options.get(
+                CONF_EXPERIMENTAL, False
             )
 
     async def _async_update_data(self):

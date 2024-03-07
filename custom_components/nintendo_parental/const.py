@@ -13,6 +13,7 @@ CONF_APPLICATIONS = "applications"
 CONF_SESSION_TOKEN = "session_token"
 CONF_UPDATE_INTERVAL = "update_interval"
 CONF_DEFAULT_MAX_PLAYTIME = "default_max_playtime"
+CONF_EXPERIMENTAL = "experimental"
 
 
 SW_CONFIGURATION_ENTITIES = {
@@ -47,16 +48,6 @@ SENSOR_CONFIGURATION_ENTITIES = {
 }
 
 TIME_CONFIGURATION_ENTITIES = {
-    "today_max_screentime": {
-        "name": "{DEV_NAME} Play Time Limit",
-        "value": "limit_time",
-        "update_method": "update_max_daily_playtime",
-    },
-    "bonus_time": {
-        "name": "{DEV_NAME} Bonus Time",
-        "value": "bonus_time",
-        "update_method": "give_bonus_time",
-    },
     "bedtime_alarm": {
         "name": "{DEV_NAME} Bedtime Alarm",
         "value": "bedtime",

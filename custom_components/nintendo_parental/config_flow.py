@@ -20,7 +20,7 @@ from .const import (
     CONF_UPDATE_INTERVAL,
     CONF_APPLICATIONS,
     CONF_DEFAULT_MAX_PLAYTIME,
-    CONF_SESSION_TOKEN,
+    CONF_SESSION_TOKEN
 )
 
 from .coordinator import NintendoUpdateCoordinator
@@ -72,12 +72,12 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
                 title=self.auth.account_id,
                 data={
                     CONF_SESSION_TOKEN: user_input[CONF_SESSION_TOKEN],
-                    CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL],
+                    CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL]
                 },
             )
         schema = {
             vol.Required(CONF_SESSION_TOKEN, default=self.auth.get_session_token): str,
-            vol.Required(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): int,
+            vol.Required(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): int
         }
         return self.async_show_form(step_id="configure", data_schema=vol.Schema(schema))
 
@@ -183,7 +183,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(CONF_UPDATE_INTERVAL, default=update_interval): int,
                     vol.Required(
                         CONF_DEFAULT_MAX_PLAYTIME, default=default_max_playtime
-                    ): int,
+                    ): int
                 }
             ),
         )
@@ -220,7 +220,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 CONF_SESSION_TOKEN: self.config_entry.data[CONF_SESSION_TOKEN],
                 CONF_UPDATE_INTERVAL: self._update_interval,
                 CONF_DEFAULT_MAX_PLAYTIME: self._default_max_playtime,
-                CONF_APPLICATIONS: self._applications,
+                CONF_APPLICATIONS: self._applications
             },
         )
 

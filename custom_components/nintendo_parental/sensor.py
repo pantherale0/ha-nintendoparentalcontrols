@@ -2,6 +2,7 @@
 from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
+from datetime import datetime
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass
@@ -34,13 +35,17 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
         self._attr_should_poll = True  # allow native value to be polled.
 
     @property
-    def native_value(self) -> float:
+    def native_value(self) -> float | None:
         """Return the native value of the sensor."""
         if self._config.get("native_value") == "playing_time":
             return self._device.daily_summaries[0].get("playingTime", 0) / 60
         if self._config.get("native_value") == "time_remaining":
             if self._device.limit_time == 0:
                 return 0
+            if self._device.limit_time is None:
+                # we will assume until midnight in this case
+                # Calculate and return the total minutes passed since midnight
+                return 1440-(datetime.now().hour * 60 + datetime.now().minute)
             return self._device.limit_time - (
                 self._device.daily_summaries[0].get("playingTime", 0) / 60
             )
