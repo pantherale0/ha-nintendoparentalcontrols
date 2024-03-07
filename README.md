@@ -32,8 +32,9 @@ _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparental
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Nintendo Switch Parental Controls
 1. You will be prompted for an access token, click the link provided in the description of the dialog (this is unique) and login to your Nintendo account.
 1. After login, you will see a `Linking an External Account` screen. For the account you wish to link, right click on the red button `Select this person` and click `Copy Link`
+1. #Optional# - If you inspect the link you should find the following format npf54789befxxxxxxxx://auth#session_token_code={redacted}&state={redacted}&session_state={redacted}
 1. Close the `Nintendo Account` tab
-1. Paste the previously copied value into the `Access token` field
+1. Paste the previously copied value into the `Access token` field (the entire string you copied)
 1. Click `Submit`
 1. The configuration flow should then show some additional options, don't adjust the first box as this is the refresh token that will be used to refresh the access tokens in the background and is retrieved from Nintndo using the token you previously provided.
 1. Click `Submit`
