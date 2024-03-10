@@ -53,7 +53,7 @@ class ScreenTimeEntity(NintendoDevice, NumberEntity):
         """Return the state of the entity."""
         if self._device.limit_time is None:
             return -1
-        return float(self._device.limit_time)
+        return self._device.limit_time
 
     @property
     def name(self) -> str:
@@ -62,6 +62,10 @@ class ScreenTimeEntity(NintendoDevice, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the state of the entity."""
+        _LOGGER.debug(">> ScreenTimeEntity.async_set_native_value(value=%s)",
+                      value)
+        if value == self.native_value:
+            return True
         if value > 360:
             raise ServiceValidationError(
                 "Play Time Limit cannot be more than 6 hours.",
