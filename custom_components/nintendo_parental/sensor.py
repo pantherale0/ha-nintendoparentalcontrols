@@ -56,7 +56,7 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
                 t_1 = datetime.combine(datetime.today(), self._device.bedtime_alarm)
                 t_2 = datetime.now()
                 min_remain = (t_1 - t_2).total_seconds() / 60
-                if min_remain > limit_remain:
+                if min_remain < limit_remain:
                     return min_remain
             return limit_remain
 
