@@ -38,7 +38,7 @@ class ScreenTimeEntity(NintendoDevice, NumberEntity):
     """A screen time entity."""
 
     _attr_should_poll = True
-    _attr_mode = NumberMode.SLIDER
+    _attr_mode = NumberMode.BOX
     _attr_native_max_value = 360
     _attr_native_step = 1
     _attr_native_unit_of_measurement = "min"
