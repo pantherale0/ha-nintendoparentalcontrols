@@ -169,7 +169,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             update_interval = self.config_entry.options.get(CONF_UPDATE_INTERVAL)
 
         return self.async_show_form(
-            step_id="init",
+            step_id="config",
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_UPDATE_INTERVAL, default=update_interval): int
