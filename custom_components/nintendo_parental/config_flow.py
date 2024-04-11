@@ -15,11 +15,9 @@ from pynintendoparental import Authenticator
 
 from .const import (
     DOMAIN,
-    DEFAULT_MAX_PLAYTIME,
     DEFAULT_UPDATE_INTERVAL,
     CONF_UPDATE_INTERVAL,
     CONF_APPLICATIONS,
-    CONF_DEFAULT_MAX_PLAYTIME,
     CONF_SESSION_TOKEN
 )
 
