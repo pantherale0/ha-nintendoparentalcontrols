@@ -62,6 +62,8 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Update the value."""
+        if self.native_value == value:
+            return True
         if self._config["update_method"] == "set_bedtime_alarm":
             if value.hour >= 16 and value.hour <= 23:
                 await self._device.set_bedtime_alarm(end_time=value, enabled=True)

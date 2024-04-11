@@ -151,6 +151,8 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         """Enable forced termination mode."""
+        if self.is_on:
+            return True
         if self._config_item == "restriction_mode":
             await self._device.set_restriction_mode(RestrictionMode.FORCED_TERMINATION)
         if self._config_item == "override":
@@ -163,6 +165,8 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
 
     async def async_turn_off(self, **kwargs) -> None:
         """Enable alarm mode."""
+        if not self.is_on:
+            return True
         if self._config_item == "restriction_mode":
             await self._device.set_restriction_mode(RestrictionMode.ALARM)
         if self._config_item == "override":

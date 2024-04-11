@@ -15,11 +15,9 @@ from pynintendoparental import Authenticator
 
 from .const import (
     DOMAIN,
-    DEFAULT_MAX_PLAYTIME,
     DEFAULT_UPDATE_INTERVAL,
     CONF_UPDATE_INTERVAL,
     CONF_APPLICATIONS,
-    CONF_DEFAULT_MAX_PLAYTIME,
     CONF_SESSION_TOKEN
 )
 
@@ -119,7 +117,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     _session_token = ""
     _update_interval = DEFAULT_UPDATE_INTERVAL
-    _default_max_playtime = DEFAULT_MAX_PLAYTIME
     _applications = []
     _coordinator: NintendoUpdateCoordinator
 
@@ -163,27 +160,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             self._session_token = self.config_entry.data[CONF_SESSION_TOKEN]
             self._update_interval = user_input[CONF_UPDATE_INTERVAL]
-            self._default_max_playtime = user_input[CONF_DEFAULT_MAX_PLAYTIME]
             return await self.async_step_init()
 
-        default_max_playtime = self.config_entry.data.get(
-            CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
-        )
         update_interval = self.config_entry.data[CONF_UPDATE_INTERVAL]
         if self.config_entry.options:
             update_interval = self.config_entry.options.get(CONF_UPDATE_INTERVAL)
-            default_max_playtime = self.config_entry.options.get(
-                CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
-            )
 
         return self.async_show_form(
-            step_id="init",
+            step_id="config",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_UPDATE_INTERVAL, default=update_interval): int,
-                    vol.Required(
-                        CONF_DEFAULT_MAX_PLAYTIME, default=default_max_playtime
-                    ): int
+                    vol.Required(CONF_UPDATE_INTERVAL, default=update_interval): int
                 }
             ),
         )
@@ -219,7 +206,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data={
                 CONF_SESSION_TOKEN: self.config_entry.data[CONF_SESSION_TOKEN],
                 CONF_UPDATE_INTERVAL: self._update_interval,
-                CONF_DEFAULT_MAX_PLAYTIME: self._default_max_playtime,
                 CONF_APPLICATIONS: self._applications
             },
         )
