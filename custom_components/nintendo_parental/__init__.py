@@ -22,7 +22,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     try:
         nintendo_auth = await Authenticator.complete_login(
-            None, entry.data[CONF_SESSION_TOKEN], True
+            None, entry.options.get(CONF_SESSION_TOKEN, entry.data[CONF_SESSION_TOKEN]), True
         )
     except InvalidSessionTokenException as err:
         raise ConfigEntryAuthFailed(err) from err

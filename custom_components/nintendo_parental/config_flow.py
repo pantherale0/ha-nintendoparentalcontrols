@@ -50,11 +50,20 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
             return await self.async_step_nintendo_website_auth()
         return await self.async_show_form(step_id="user")
 
-    async def async_step_nintendo_website_auth(self, user_input=None):
+    async def async_step_nintendo_website_auth(self, user_input=None, is_reauth=False):
         """Begin auth flow with Nintendo site."""
         if user_input is not None:
             await self.auth.complete_login(self.auth, user_input[CONF_API_TOKEN], False)
-            return await self.async_step_configure()
+            if is_reauth:
+                return self.async_create_entry(
+                    title=self.reauth_entry.title,
+                    data={
+                        **self.reauth_entry.options,
+                        CONF_SESSION_TOKEN: self.auth.get_session_token
+                    }
+                )
+            else:
+                return await self.async_step_configure()
         return self.async_show_form(
             step_id="nintendo_website_auth",
             description_placeholders={"link": self.auth.login_url},
@@ -89,7 +98,7 @@ class BlueprintFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def async_step_reauth_login(self, user_input=None):
         """Handle reauth login."""
-        return await self.async_step_nintendo_website_auth()
+        return await self.async_step_nintendo_website_auth(is_reauth=True)
 
     async def async_step_reauth_obtain_token(self, user_input=None):
         """Obtain token and update configuration."""
