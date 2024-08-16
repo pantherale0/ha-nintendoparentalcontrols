@@ -1,0 +1,81 @@
+{
+  "issues": {
+    "dependancy_needs_updating": {
+      "title": "A aplicação móvel foi atualizada",
+      "description": "Ocorreu uma alteração no método de autenticação OAuth utilizado pela aplicação móvel Nintendo Switch Parental Controls.\n\nEste problema não é resolvível, por favor use o link 'Saiba mais' para reportar este problema ao responsável pela manutenção."
+    },
+    "configuration_error": {
+      "title": "Erro ao configurar {name}",
+      "description": "Houve um problema com a resposta da Nintendo para este dispositivo. Verifique os logs para mais informações.\n\nIsto pode ocorrer devido a um problema de configuração nas definições de controlo parental.\n\nAntes de reportar este problema, certifique-se de que o modo de depuração está ativado e recarregue a integração."
+    }
+  },
+  "config": {
+    "step": {
+      "configure": {
+        "description": "Não ajuste o parâmetro do token de sessão no topo. Por padrão, os sensores serão atualizados a cada 60 segundos.",
+        "data": {
+          "session_token": "Token de sessão",
+          "update_interval": "Intervalo de atualização (segundos)",
+          "default_max_playtime": "Tempo máximo de jogo padrão (minutos)",
+          "experimental": "Funcionalidades experimentais"
+        }
+      },
+      "nintendo_website_auth": {
+        "description": "Clique neste link [Iniciar sessão na Nintendo]({link}) para iniciar sessão na Nintendo e obter o token de acesso para o próximo passo.",
+        "data": {
+          "api_token": "Token de acesso"
+        }
+      }
+    },
+    "error": {
+      "auth": "Nome de utilizador/palavra-passe está errado.",
+      "connection": "Não foi possível ligar ao servidor.",
+      "unknown": "Ocorreu um erro desconhecido."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Controlo Parental da Nintendo Switch",
+        "menu_options": {
+          "applications": "Configurar aplicações para registar entidades",
+          "config": "Opções extra",
+          "done": "Guardar e sair"
+        }
+      },
+      "config": {
+        "description": "Atualizar a configuração dos Controlo Parental da Nintendo Switch",
+        "data": {
+          "update_interval": "Intervalo de atualização (segundos)",
+          "default_max_playtime": "Tempo máximo de jogo padrão (minutos)",
+          "experimental": "Funcionalidades experimentais"
+        }
+      },
+      "applications": {
+        "description": "Configurar aplicações para registar entidades de controlo da lista branca.",
+        "data": {
+          "applications": "Nome(s) da aplicação"
+        }
+      },
+      "reauth": {
+        "description": "Reautenticar com o serviço online da Nintendo."
+      },
+      "post": {
+        "description": "Não ajuste o parâmetro do token de sessão no topo. Por padrão, os sensores serão atualizados a cada 60 segundos.",
+        "data": {
+          "session_token": "Token de sessão",
+          "update_interval": "Intervalo de atualização (segundos)",
+          "default_max_playtime": "Tempo máximo de jogo padrão (minutos)"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "bedtime_alarm_out_of_range": {
+      "message": "Hora inválida fornecida, esperado entre as 16:00 e 23:59. Recebido: {time}"
+    },
+    "play_time_limit_out_of_range": {
+      "message": "O limite de tempo de jogo não pode ser superior a 6 horas. Para bloquear a Switch, defina para 0, para desativar os limites de tempo de ecrã, defina para -1."
+    }
+  }
+}
