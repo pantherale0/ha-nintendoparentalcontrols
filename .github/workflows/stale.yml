@@ -16,13 +16,6 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/stale@v5
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: 'Stale issue message'
-        stale-pr-message: ''
-        stale-issue-label: 'stale'
-        stale-pr-label: 'stale'
     - name: Close Stale Issues
       uses: actions/stale@v9.0.0
       with:
