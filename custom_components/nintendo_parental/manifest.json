@@ -16,7 +16,7 @@
     "pynintendoparental"
   ],
   "requirements": [
-    "pynintendoparental==0.5.0"
+    "pynintendoparental==0.6.2"
   ],
   "version": "2024.4.0"
 }

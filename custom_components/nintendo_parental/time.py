@@ -76,4 +76,5 @@ class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
                     translation_key="bedtime_alarm_out_of_range",
                     translation_placeholders={"time": value.strftime("%H:%M")},
                 )
-        await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
+        # await self.coordinator.async_request_refresh()

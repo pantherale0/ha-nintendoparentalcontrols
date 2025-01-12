@@ -31,7 +31,8 @@ async def async_setup_entry(
         for device in list(coordinator.api.devices.values()):
             for config in SW_CONFIGURATION_ENTITIES:
                 entities.append(
-                    DeviceConfigurationSwitch(coordinator, device.device_id, config)
+                    DeviceConfigurationSwitch(
+                        coordinator, device.device_id, config)
                 )
             for app_id in entry.options.get(CONF_APPLICATIONS, []):
                 try:
@@ -96,14 +97,16 @@ class ApplicationWhitelistSwitch(NintendoDevice, SwitchEntity):
         await self._device.set_whitelisted_application(
             app_id=self._app_id, allowed=False
         )
-        return await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
+        # return await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Enable whitelisted mode."""
         await self._device.set_whitelisted_application(
             app_id=self._app_id, allowed=True
         )
-        return await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
+        # return await self.coordinator.async_request_refresh()
 
 
 class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
@@ -161,7 +164,8 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
         if self._config_item == "alarms_enabled":
             self._device.alarms_enabled = True
             await self._device.set_alarm_state(AlarmSettingState.TO_VISIBLE)
-        return await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
+        # return await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Enable alarm mode."""
@@ -179,4 +183,5 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
                 await self._device.update_max_daily_playtime(self._old_state)
         if self._config_item == "alarms_enabled":
             await self._device.set_alarm_state(AlarmSettingState.TO_INVISIBLE)
-        return await self.coordinator.async_request_refresh()
+        self.schedule_update_ha_state()
+        # return await self.coordinator.async_request_refresh()

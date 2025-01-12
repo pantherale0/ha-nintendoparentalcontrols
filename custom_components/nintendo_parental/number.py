@@ -19,6 +19,7 @@ from .entity import NintendoDevice
 
 _LOGGER = logging.getLogger(__name__)
 
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
@@ -77,7 +78,8 @@ class ScreenTimeEntity(NintendoDevice, NumberEntity):
                 await self._device.update_max_daily_playtime(minutes=None)
             else:
                 await self._device.update_max_daily_playtime(minutes=value)
-            await self.coordinator.async_request_refresh()
+            self.schedule_update_ha_state()
+            # await self.coordinator.async_request_refresh()
         except HttpException as exc:
             raise HomeAssistantError(
                 "Nintendo returned an unexpected response.",
