@@ -74,10 +74,7 @@ class ScreenTimeEntity(NintendoDevice, NumberEntity):
                 translation_key="play_time_limit_out_of_range",
             )
         try:
-            if value == -1:
-                await self._device.update_max_daily_playtime(minutes=None)
-            else:
-                await self._device.update_max_daily_playtime(minutes=value)
+            await self._device.update_max_daily_playtime(minutes=value)
             self.schedule_update_ha_state()
             # await self.coordinator.async_request_refresh()
         except HttpException as exc:
