@@ -2,6 +2,7 @@
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
+![Install Stats][stats]
 [![License][license-shield]](LICENSE)
 
 [![hacs][hacsbadge]][hacs]
@@ -61,6 +62,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [ha-nintendoparentalcontrols]: https://github.com/pantherale0/ha-nintendoparentalcontrols
 [commits-shield]: https://img.shields.io/github/commit-activity/y/pantherale0/ha-nintendoparentalcontrols.svg?style=for-the-badge
 [commits]: https://github.com/pantherale0/ha-nintendoparentalcontrols/commits/main
+[stats]: https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.nintendo_parental.total&style=for-the-badge
 [hacs]: https://github.com/hacs/integration
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-green.svg?style=for-the-badge
 [license-shield]: https://img.shields.io/github/license/pantherale0/ha-nintendoparentalcontrols.svg?style=for-the-badge
