@@ -1,0 +1,81 @@
+{
+    "issues": {
+        "dependancy_needs_updating": {
+            "title": "L'application mobile a été mise à jour",
+            "description": "Une modification a été apportée à la méthode d'authentification OAuth utilisée par l'application mobile Nintendo Switch Contrôle Parental.\n\nCe problème ne peut pas être résolu, veuillez utiliser le lien En savoir plus pour le signaler au développeur."
+        },
+        "configuration_error": {
+            "title": "Erreur de configuration {name}",
+            "description": "Il y a eu un problème avec la réponse de Nintendo pour cet appareil, vérifiez les journaux pour plus d'informations.\n\nCela peut se produire en raison d’un problème de configuration des paramètres de contrôle parental.\n\nAvant de signaler ce problème, assurez-vous que le mode débogage est activé et rechargez l’intégration."
+        }
+    },
+    "config": {
+        "step": {
+            "configure": {
+                "description": "Ne modifiez pas le paramètre du jeton de session en haut. Par défaut, les capteurs se mettront à jour toutes les 60 secondes.",
+                "data": {
+                    "session_token": "Jeton de session",
+                    "update_interval": "Intervalle de mise à jour (secondes)",
+                    "default_max_playtime": "Durée de jeu maximale par défaut (minutes)",
+                    "experimental": "Fonctionnalités expérimentales"
+                }
+            },
+            "nintendo_website_auth": {
+                "description": "Cliquez ce lien [Nintendo Login]({link}) pour vous connecter à Nintendo et récupérer le jeton d'accès pour le champ suivant.",
+                "data": {
+                    "api_token": "Jeton d'accès"
+                }
+            }
+        },
+        "error": {
+            "auth": "Nom d’utilisateur/mot de passe incorrect.",
+            "connection": "Impossible de se connecter au serveur.",
+            "unknown": "Une erreur inconnue est survenue."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Nintendo Switch Contrôle Parental",
+                "menu_options": {
+                    "applications": "Configurer les applications pour enregistrer des entités",
+                    "config": "Options supplémentaires",
+                    "done": "Enregistrer et quitter"
+                }
+            },
+            "config": {
+                "description": "Mettre à jour la configuration de Nintendo Switch Contrôle Parental",
+                "data": {
+                    "update_interval": "Intervalle de mise à jour (secondes)",
+                    "default_max_playtime": "Durée maximale de jeu par défaut (minutes)",
+                    "experimental": "Fonctionnalités expérimentales"
+                }
+            },
+            "applications": {
+                "description": "Configurer les applications pour lesquelles enregistrer des entités de contrôle de liste blanche.",
+                "data": {
+                    "applications": "Nom(s) d'application(s)"
+                }
+            },
+            "reauth": {
+                "description": "Se réauthentifier avec le service Nintendo Online."
+            },
+            "post": {
+                "description": "Ne modifiez pas le paramètre du jeton de session en haut. Par défaut, les capteurs se mettront à jour toutes les 60 secondes.",
+                "data": {
+                    "session_token": "Jeton de session",
+                    "update_interval": "Intervalle de mise à jour (secondes)",
+                    "default_max_playtime": "Durée maximale de jeu par défaut (minutes)"
+                }
+            }
+        }
+    },
+    "exceptions": {
+        "bedtime_alarm_out_of_range": {
+            "message": "Temps invalide fourni, attendu entre 16:00 et 23:59. Valeur reçue {time}"
+        },
+        "play_time_limit_out_of_range": {
+            "message": "La durée maximale de jeu ne peut pas dépasser 6 heures. Pour verrouiller la Switch, définissez la valeur à 0 ; pour désactiver les limites de temps d’écran, définissez-la à -1."
+        }
+    }
+}
