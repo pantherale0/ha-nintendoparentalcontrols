@@ -33,3 +33,4 @@ jobs:
         uses: softprops/action-gh-release@v2.2.1
         with:
           files: ${{ github.workspace }}/custom_components/nintendo_parental/nintendo_parental.zip
+          tag_name: ${{ github.event.release.tag_name }}
