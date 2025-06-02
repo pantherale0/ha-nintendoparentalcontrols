@@ -39,7 +39,7 @@ class NintendoDevice(CoordinatorEntity):
             manufacturer="Nintendo",
             name=self._device.name,
             entry_type=dr.DeviceEntryType.SERVICE,
-            sw_version=self._device.extra["device"]["firmwareVersion"][
+            sw_version=self._device.extra["firmwareVersion"][
                 "displayedVersion"
             ],
         )

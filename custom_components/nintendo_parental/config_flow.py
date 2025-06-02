@@ -10,14 +10,12 @@ from homeassistant.core import callback
 from homeassistant.const import CONF_API_TOKEN
 from homeassistant.config_entries import ConfigFlow, ConfigEntry
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import selector
 from pynintendoparental import Authenticator
 
 from .const import (
     DOMAIN,
     DEFAULT_UPDATE_INTERVAL,
     CONF_UPDATE_INTERVAL,
-    CONF_APPLICATIONS,
     CONF_SESSION_TOKEN
 )
 
@@ -124,37 +122,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize options flow."""
         self.config_entry = config_entry
 
-    @property
-    def _get_application_name_list(self) -> list[str]:
-        """Return all applications as a list of names."""
-        apps = []
-        for device in self._coordinator.api.devices.values():
-            for app in device.applications:
-                if app.application_id not in apps:
-                    apps.append(app.name)
-        return apps
-
-    @property
-    def _get_application_name_list_enabled(self) -> list[str]:
-        """Return list of applications stored in local _applications."""
-        apps = []
-        for device in self._coordinator.api.devices.values():
-            for app in device.applications:
-                if (
-                    app.application_id not in apps
-                    and app.application_id in self._applications
-                ):
-                    apps.append(app.name)
-        return apps
-
-    def _get_application_id_from_name(self, name: str) -> str:
-        """Return the application ID from a given name."""
-        for device in self._coordinator.api.devices.values():
-            for app in device.applications:
-                if app.name == name:
-                    return app.application_id
-        return None
-
     async def async_step_config(self, user_input: dict[str, Any] | None = None):
         """Extra options flow."""
         if user_input is not None:
@@ -175,38 +142,13 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             ),
         )
 
-    async def async_step_applications(self, user_input: dict[str, Any] | None = None):
-        """Application configuration."""
-        if user_input is not None:
-            self._applications = []
-            for app_name in user_input[CONF_APPLICATIONS]:
-                self._applications.append(self._get_application_id_from_name(app_name))
-            return await self.async_step_init()
-        return self.async_show_form(
-            step_id=CONF_APPLICATIONS,
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        CONF_APPLICATIONS, default=[]
-                    ): selector.SelectSelector(
-                        config=selector.SelectSelectorConfig(
-                            mode=selector.SelectSelectorMode.DROPDOWN,
-                            options=self._get_application_name_list,
-                            multiple=True,
-                        )
-                    )
-                }
-            ),
-        )
-
     async def async_step_done(self, _: dict[str, Any] | None = None):
         """Create or update entry."""
         return self.async_create_entry(
             title=self.config_entry.title,
             data={
                 CONF_SESSION_TOKEN: self.config_entry.data[CONF_SESSION_TOKEN],
-                CONF_UPDATE_INTERVAL: self._update_interval,
-                CONF_APPLICATIONS: self._applications
+                CONF_UPDATE_INTERVAL: self._update_interval
             },
         )
 
@@ -218,5 +160,5 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.config_entry.entry_id
         ]
         return self.async_show_menu(
-            step_id="init", menu_options=[CONF_APPLICATIONS, "config", "done"]
+            step_id="init", menu_options=["config", "done"]
         )
