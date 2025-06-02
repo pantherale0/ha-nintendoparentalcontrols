@@ -2,7 +2,7 @@
 from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
-from datetime import datetime, time
+from datetime import datetime
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass

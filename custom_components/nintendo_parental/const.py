@@ -22,11 +22,6 @@ SW_CONFIGURATION_ENTITIES = {
         "name": "{DEV_NAME} Suspend Software Limit",
         "value": "parental_control_settings",
     },
-    "alarms_enabled": {
-        "icon": "mdi:alarm",
-        "name": "{DEV_NAME} Alarms Enabled Today",
-        "value": "alarms_enabled",
-    },
 }
 
 SENSOR_CONFIGURATION_ENTITIES = {
