@@ -2,7 +2,6 @@
 from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
-from datetime import datetime
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass
@@ -38,32 +37,9 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
     def native_value(self) -> float | None:
         """Return the native value of the sensor."""
         if self._config.get("native_value") == "playing_time":
-            return self._device.daily_summaries[0].get("playingTime", 0) / 60
+            return self._device.today_playing_time
         if self._config.get("native_value") == "time_remaining":
-            if self._device.limit_time == 0:
-                return 0
-            if self._device.limit_time is None and self._device.bedtime_alarm is None:
-                # we will assume until midnight in this case
-                # Calculate and return the total minutes passed since midnight
-                return 1440-(datetime.now().hour * 60 + datetime.now().minute)
-            if self._device.limit_time is None:
-                limit_remain = 1440 - \
-                    (datetime.now().hour * 60 + datetime.now().minute)
-            else:
-                limit_remain = self._device.limit_time - (
-                    self._device.daily_summaries[0].get("playingTime", 0) / 60
-                )
-            if self._device.bedtime_alarm is not None:
-                if self._device.bedtime_alarm < datetime.now().time():
-                    return 0
-                # work out minutes remaining
-                t_1 = datetime.combine(
-                    datetime.today(), self._device.bedtime_alarm)
-                t_2 = datetime.now()
-                min_remain = (t_1 - t_2).total_seconds() / 60
-                if min_remain < limit_remain:
-                    return min_remain
-            return limit_remain
+            return self._device.today_time_remaining
 
     @property
     def native_unit_of_measurement(self) -> str:
