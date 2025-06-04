@@ -9,7 +9,7 @@ from .const import DOMAIN
 from .coordinator import NintendoUpdateCoordinator
 
 
-class NintendoDevice(CoordinatorEntity):
+class NintendoDevice(CoordinatorEntity[NintendoUpdateCoordinator]):
     """A Nintendo device."""
 
     def __init__(
@@ -17,7 +17,6 @@ class NintendoDevice(CoordinatorEntity):
     ) -> None:
         """Initialize."""
         super().__init__(coordinator)
-        self.coordinator: NintendoUpdateCoordinator = coordinator
         self._device_id = device_id
         self._entity_id = entity_id
 
