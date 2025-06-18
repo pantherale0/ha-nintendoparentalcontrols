@@ -4,7 +4,6 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -12,7 +11,7 @@ from pynintendoparental.enum import RestrictionMode
 
 from .coordinator import NintendoParentalConfigEntry
 
-from .const import DOMAIN, SW_CONFIGURATION_ENTITIES
+from .const import SW_CONFIGURATION_ENTITIES
 
 from .entity import NintendoDevice
 

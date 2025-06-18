@@ -4,7 +4,6 @@
 import logging
 
 from homeassistant.components.number import NumberEntity, NumberMode
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError, HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback

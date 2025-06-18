@@ -6,8 +6,8 @@ from typing import Any
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass
 
-from .const import DOMAIN, SENSOR_CONFIGURATION_ENTITIES
-from .coordinator import NintendoUpdateCoordinator, NintendoParentalConfigEntry
+from .const import SENSOR_CONFIGURATION_ENTITIES
+from .coordinator import NintendoParentalConfigEntry
 from .entity import NintendoDevice
 
 
