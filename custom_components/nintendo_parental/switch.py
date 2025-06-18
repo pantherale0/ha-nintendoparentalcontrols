@@ -42,7 +42,6 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
         super().__init__(coordinator, device_id, config_item)
         self._config = SW_CONFIGURATION_ENTITIES.get(config_item)
         self._config_item = config_item
-        self._attr_should_poll = True
         self._old_state = None
         if self._config_item == "limit_time":
             self._old_state = self._device.limit_time

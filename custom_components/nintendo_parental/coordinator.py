@@ -74,9 +74,7 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Request the API to update."""
         try:
-            with contextlib.suppress(InvalidSessionTokenException):
-                async with async_timeout.timeout(self._config_update_interval - 5):
-                    return await self.api.update()
+            return await self.api.update()
         except InvalidOAuthConfigurationException as err:
             raise ConfigEntryAuthFailed(err) from err
         except Exception as err:

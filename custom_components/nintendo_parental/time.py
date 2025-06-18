@@ -36,8 +36,6 @@ async def async_setup_entry(
 class NintendoParentalTimeEntity(NintendoDevice, TimeEntity):
     """An instance of a time entity."""
 
-    _attr_should_poll = True
-
     def __init__(
         self, coordinator: NintendoUpdateCoordinator, device_id, entity_id
     ) -> None:

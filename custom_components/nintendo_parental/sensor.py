@@ -31,7 +31,6 @@ class NintendoDeviceSensor(NintendoDevice, SensorEntity):
         """Initialize the sensor class."""
         super().__init__(coordinator, device_id, sensor)
         self._config = SENSOR_CONFIGURATION_ENTITIES.get(sensor)
-        self._attr_should_poll = True  # allow native value to be polled.
 
     @property
     def native_value(self) -> float | None:

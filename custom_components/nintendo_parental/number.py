@@ -38,7 +38,6 @@ async def async_setup_entry(
 class ScreenTimeEntity(NintendoDevice, NumberEntity):
     """A screen time entity."""
 
-    _attr_should_poll = True
     _attr_mode = NumberMode.BOX
     _attr_native_max_value = 360
     _attr_native_step = 1
