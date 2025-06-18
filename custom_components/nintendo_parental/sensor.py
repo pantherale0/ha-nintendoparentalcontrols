@@ -7,19 +7,18 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass
 
 from .const import DOMAIN, SENSOR_CONFIGURATION_ENTITIES
-from .coordinator import NintendoUpdateCoordinator
+from .coordinator import NintendoUpdateCoordinator, NintendoParentalConfigEntry
 from .entity import NintendoDevice
 
 
-async def async_setup_entry(hass, entry, async_add_devices):
+async def async_setup_entry(hass, entry: NintendoParentalConfigEntry, async_add_devices):
     """Set up the sensor platform."""
-    coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if coordinator.api.devices is not None:
-        for device in list(coordinator.api.devices.values()):
+    if entry.runtime_data.api.devices is not None:
+        for device in list(entry.runtime_data.api.devices.values()):
             for sensor in SENSOR_CONFIGURATION_ENTITIES:
                 entities.append(
-                    NintendoDeviceSensor(coordinator, device.device_id, sensor)
+                    NintendoDeviceSensor(entry.runtime_data, device.device_id, sensor)
                 )
     async_add_devices(entities, True)
 

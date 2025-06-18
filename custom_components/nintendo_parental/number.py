@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from pynintendoparental.exceptions import HttpException
 
-from .coordinator import NintendoUpdateCoordinator
+from .coordinator import NintendoParentalConfigEntry
 
 from .const import DOMAIN
 
@@ -21,15 +21,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: NintendoParentalConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up Nintendo Switch Parental Control number platform."""
-    coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if coordinator.api.devices is not None:
-        for device in list(coordinator.api.devices.values()):
+    if entry.runtime_data.api.devices is not None:
+        for device in list(entry.runtime_data.api.devices.values()):
             entities.append(ScreenTimeEntity(
-                coordinator=coordinator,
+                coordinator=entry.runtime_data,
                 device_id=device.device_id,
                 entity_id="today_max_screentime"))
     async_add_entities(entities, True)
