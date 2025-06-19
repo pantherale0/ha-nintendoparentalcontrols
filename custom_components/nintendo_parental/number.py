@@ -4,14 +4,13 @@
 import logging
 
 from homeassistant.components.number import NumberEntity, NumberMode
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError, HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from pynintendoparental.exceptions import HttpException
 
-from .coordinator import NintendoUpdateCoordinator
+from .coordinator import NintendoParentalConfigEntry
 
 from .const import DOMAIN
 
@@ -21,15 +20,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: NintendoParentalConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up Nintendo Switch Parental Control number platform."""
-    coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if coordinator.api.devices is not None:
-        for device in list(coordinator.api.devices.values()):
+    if entry.runtime_data.api.devices is not None:
+        for device in list(entry.runtime_data.api.devices.values()):
             entities.append(ScreenTimeEntity(
-                coordinator=coordinator,
+                coordinator=entry.runtime_data,
                 device_id=device.device_id,
                 entity_id="today_max_screentime"))
     async_add_entities(entities, True)
@@ -38,7 +36,6 @@ async def async_setup_entry(
 class ScreenTimeEntity(NintendoDevice, NumberEntity):
     """A screen time entity."""
 
-    _attr_should_poll = True
     _attr_mode = NumberMode.BOX
     _attr_native_max_value = 360
     _attr_native_step = 1

@@ -4,15 +4,14 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from pynintendoparental.enum import RestrictionMode
 
-from .coordinator import NintendoUpdateCoordinator
+from .coordinator import NintendoParentalConfigEntry
 
-from .const import DOMAIN, SW_CONFIGURATION_ENTITIES
+from .const import SW_CONFIGURATION_ENTITIES
 
 from .entity import NintendoDevice
 
@@ -20,17 +19,16 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: NintendoParentalConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up Nintendo Switch Parental Control switches."""
-    coordinator: NintendoUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if coordinator.api.devices is not None:
-        for device in list(coordinator.api.devices.values()):
+    if entry.runtime_data.api.devices is not None:
+        for device in list(entry.runtime_data.api.devices.values()):
             for config in SW_CONFIGURATION_ENTITIES:
                 entities.append(
                     DeviceConfigurationSwitch(
-                        coordinator, device.device_id, config)
+                        entry.runtime_data, device.device_id, config)
                 )
     async_add_entities(entities, True)
 
@@ -42,7 +40,6 @@ class DeviceConfigurationSwitch(NintendoDevice, SwitchEntity):
         super().__init__(coordinator, device_id, config_item)
         self._config = SW_CONFIGURATION_ENTITIES.get(config_item)
         self._config_item = config_item
-        self._attr_should_poll = True
         self._old_state = None
         if self._config_item == "limit_time":
             self._old_state = self._device.limit_time

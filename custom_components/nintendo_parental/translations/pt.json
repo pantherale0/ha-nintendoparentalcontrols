@@ -11,16 +11,7 @@
   },
   "config": {
     "step": {
-      "configure": {
-        "description": "Não ajuste o parâmetro do token de sessão no topo. Por padrão, os sensores serão atualizados a cada 60 segundos.",
-        "data": {
-          "session_token": "Token de sessão",
-          "update_interval": "Intervalo de atualização (segundos)",
-          "default_max_playtime": "Tempo máximo de jogo padrão (minutos)",
-          "experimental": "Funcionalidades experimentais"
-        }
-      },
-      "nintendo_website_auth": {
+      "user": {
         "description": "Clique neste link [Iniciar sessão na Nintendo]({link}) para iniciar sessão na Nintendo e obter o token de acesso para o próximo passo.",
         "data": {
           "api_token": "Token de acesso"
@@ -31,43 +22,6 @@
       "auth": "Nome de utilizador/palavra-passe está errado.",
       "connection": "Não foi possível ligar ao servidor.",
       "unknown": "Ocorreu um erro desconhecido."
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Controlo Parental da Nintendo Switch",
-        "menu_options": {
-          "applications": "Configurar aplicações para registar entidades",
-          "config": "Opções extra",
-          "done": "Guardar e sair"
-        }
-      },
-      "config": {
-        "description": "Atualizar a configuração dos Controlo Parental da Nintendo Switch",
-        "data": {
-          "update_interval": "Intervalo de atualização (segundos)",
-          "default_max_playtime": "Tempo máximo de jogo padrão (minutos)",
-          "experimental": "Funcionalidades experimentais"
-        }
-      },
-      "applications": {
-        "description": "Configurar aplicações para registar entidades de controlo da lista branca.",
-        "data": {
-          "applications": "Nome(s) da aplicação"
-        }
-      },
-      "reauth": {
-        "description": "Reautenticar com o serviço online da Nintendo."
-      },
-      "post": {
-        "description": "Não ajuste o parâmetro do token de sessão no topo. Por padrão, os sensores serão atualizados a cada 60 segundos.",
-        "data": {
-          "session_token": "Token de sessão",
-          "update_interval": "Intervalo de atualização (segundos)",
-          "default_max_playtime": "Tempo máximo de jogo padrão (minutos)"
-        }
-      }
     }
   },
   "exceptions": {

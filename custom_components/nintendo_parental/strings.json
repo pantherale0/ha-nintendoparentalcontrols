@@ -10,66 +10,26 @@
         }
     },
     "config": {
-        "step": {
-            "configure": {
-                "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
-                "data": {
-                    "session_token": "Session token",
-                    "update_interval": "Update interval (seconds)",
-                    "default_max_playtime": "Default maximum play time (minutes)",
-                    "experimental": "Experimental features"
-                }
-            },
-            "nintendo_website_auth": {
-                "description": "Click this link [Nintendo Login]({link}) to login to Nintendo. For the account you wish to link, right click on the red button Select this person and click Copy Link to use in the next step.",
-                "data": {
-                    "api_token": "Access token"
-                }
-            }
+    "step": {
+      "user": {
+        "description": "To obtain your access token, click [Nintendo Login]({link}) to sign in to your Nintendo account. Then, for the account you want to link, right-click on the red **Select this person** button and choose **Copy Link Address**.",
+        "data": {
+          "api_token": "Access token"
         },
-        "error": {
-            "auth": "Username/Password is wrong.",
-            "connection": "Unable to connect to the server.",
-            "unknown": "Unknown error occurred."
+        "data_description": {
+          "api_token": "The link copied from the Nintendo website"
         }
+      }
     },
-    "options": {
-        "step": {
-            "init": {
-                "title": "Nintendo Switch Parental Controls",
-                "menu_options": {
-                    "applications": "Configure applications to register entities",
-                    "config": "Extra options",
-                    "done": "Save and exit"
-                }
-            },
-            "config": {
-                "description": "Update Nintendo Switch Parental Controls configuration",
-                "data": {
-                    "update_interval": "Update interval (seconds)",
-                    "default_max_playtime": "Default maximum play time (minutes)",
-                    "experimental": "Experimental features"
-                }
-            },
-            "applications": {
-                "description": "Configure applications to register whitelist control entites for.",
-                "data": {
-                    "applications": "App name(s)"
-                }
-            },
-            "reauth": {
-                "description": "Reauthenticate with Nintendo Online service."
-            },
-            "post": {
-                "description": "Do not adjust the session token parameter at the top. By default sensors will update every 60 seconds.",
-                "data": {
-                    "session_token": "Session token",
-                    "update_interval": "Update interval (seconds)",
-                    "default_max_playtime": "Default maximum play time (minutes)"
-                }
-            }
+    "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+    "abort": {
+            "already_configured": "Account is already configured"
         }
-    },
+  },
     "exceptions": {
         "bedtime_alarm_out_of_range": {
             "message": "Invalid time provided, expected between 16:00 and 23:59. Got {time}"

@@ -1,83 +1,52 @@
-"""DataUpdateCoordinator for nintendo_parental."""
+"""Nintendo Parental Controls data coordinator."""
 
 from __future__ import annotations
-import contextlib
 
 from datetime import timedelta
+import logging
 
-import async_timeout
+from pynintendoparental import Authenticator, NintendoParental
+from pynintendoparental.exceptions import InvalidOAuthConfigurationException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
-)
+from homeassistant.exceptions import ConfigEntryError
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from pynintendoparental import NintendoParental, Authenticator
-from pynintendoparental.exceptions import (
-    InvalidSessionTokenException,
-    InvalidOAuthConfigurationException,
-)
+from .const import DOMAIN
 
-from .const import (
-    DOMAIN,
-    LOGGER,
-    DEFAULT_MAX_PLAYTIME,
-    CONF_DEFAULT_MAX_PLAYTIME,
-    CONF_UPDATE_INTERVAL,
-    CONF_EXPERIMENTAL
-)
+_LOGGER = logging.getLogger(__name__)
+UPDATE_INTERVAL = timedelta(seconds=60)
 
 
-class NintendoUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the API."""
+class NintendoUpdateCoordinator(DataUpdateCoordinator[None]):
+    """Nintendo data update coordinator."""
 
     def __init__(
         self,
         hass: HomeAssistant,
         authenticator: Authenticator,
-        config_entry: ConfigEntry,
+        config_entry: NintendoParentalConfigEntry,
     ) -> None:
-        """Initialize."""
-        self._config_update_interval = config_entry.data[CONF_UPDATE_INTERVAL]
-        if config_entry.options:
-            self._config_update_interval = config_entry.options.get(
-                CONF_UPDATE_INTERVAL
-            )
+        """Initialize update coordinator."""
         super().__init__(
             hass=hass,
-            logger=LOGGER,
+            logger=_LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=self._config_update_interval),
+            update_interval=UPDATE_INTERVAL,
+            config_entry=config_entry,
+        )
+        self.api = NintendoParental(
+            authenticator, hass.config.time_zone, hass.config.language
         )
 
-        self.api: NintendoParental = NintendoParental(
-            auth=authenticator,
-            timezone=hass.config.time_zone,
-            lang=hass.config.language,
-        )
-        self.config_entry: ConfigEntry = config_entry
-        self.default_max_playtime = config_entry.data.get(
-            CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
-        )
-        self.experimental_mode = config_entry.data.get(CONF_EXPERIMENTAL, False)
-        if config_entry.options:
-            self.default_max_playtime = config_entry.options.get(
-                CONF_DEFAULT_MAX_PLAYTIME, DEFAULT_MAX_PLAYTIME
-            )
-            self.experimental_mode = config_entry.options.get(
-                CONF_EXPERIMENTAL, False
-            )
-
-    async def _async_update_data(self):
-        """Request the API to update."""
+    async def _async_update_data(self) -> None:
+        """Update data from Nintendo's API."""
         try:
-            with contextlib.suppress(InvalidSessionTokenException):
-                async with async_timeout.timeout(self._config_update_interval - 5):
-                    return await self.api.update()
+            return await self.api.update()
         except InvalidOAuthConfigurationException as err:
-            raise ConfigEntryAuthFailed(err) from err
-        except Exception as err:
-            raise UpdateFailed(err) from err
+            raise ConfigEntryError(
+                err, translation_domain=DOMAIN, translation_key="invalid_auth"
+            ) from err
+
+type NintendoParentalConfigEntry = ConfigEntry[NintendoUpdateCoordinator]
