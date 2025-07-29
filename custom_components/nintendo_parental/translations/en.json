@@ -61,6 +61,7 @@
           "name": "Device"
         },
         "integration_id": {
+          "description": "The ID of the account to which the device belongs.",
           "name": "Account"
         }
       },
