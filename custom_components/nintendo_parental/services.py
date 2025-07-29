@@ -27,7 +27,7 @@ def async_setup_services(
         schema=vol.Schema({
             vol.Required("integration_id"): cv.string,
             vol.Required("device_id"): cv.string,
-            vol.Required("bonus_time"): int,
+            vol.Required("bonus_time"): vol.All(int, vol.Range(min=-1, max=1440)),
         })
     )
 
