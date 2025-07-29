@@ -38,12 +38,33 @@
       "title": "Mobile application has been updated"
     },
     "invalid_auth": {
-      "description": "The stored authentication token is invalid. Please reconfigure the integration.",
+      "description": "The stored authentication token for {account_id} is invalid. Please reconfigure the integration.",
       "title": "Invalid authentication"
     },
     "no_devices_found": {
-      "description": "No devices were found for this account. Please ensure that the account has a Nintendo Switch linked to it and that the parental controls are set up correctly.",
+      "description": "No devices were found for {account_id}. Please ensure that the account has a Nintendo Switch linked to it and that the parental controls are set up correctly.",
       "title": "No devices found"
+    }
+  },
+  "services": {
+    "add_bonus_time": {
+      "description": "Add bonus screen time to the selected Nintendo Switch.",
+      "fields": {
+        "bonus_time": {
+          "description": "The amount of bonus time to add in minutes. Maximum is 1440 minutes, minimum is -1. Use -1 for no further time limit.",
+          "example": 30,
+          "name": "Bonus Time"
+        },
+        "device_id": {
+          "description": "The ID of the device to add bonus time to.",
+          "example": "1234567890abcdef",
+          "name": "Device"
+        },
+        "integration_id": {
+          "name": "Account"
+        }
+      },
+      "name": "Add Bonus Time"
     }
   }
 }
