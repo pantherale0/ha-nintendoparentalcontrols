@@ -5,15 +5,18 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 
-from pynintendoparental import Authenticator, NintendoParental
-from pynintendoparental.exceptions import InvalidOAuthConfigurationException
+from pynintendoparental import NintendoParental
+from pynintendoparental.authenticator import Authenticator
+from pynintendoparental.exceptions import InvalidOAuthConfigurationException, NoDevicesFoundException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN
+from .repairs import raise_no_devices_found, raise_invalid_auth
 
 _LOGGER = logging.getLogger(__name__)
 UPDATE_INTERVAL = timedelta(seconds=60)
@@ -43,10 +46,22 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator[None]):
     async def _async_update_data(self) -> None:
         """Update data from Nintendo's API."""
         try:
-            return await self.api.update()
-        except InvalidOAuthConfigurationException as err:
-            raise ConfigEntryError(
-                err, translation_domain=DOMAIN, translation_key="invalid_auth"
-            ) from err
+            no_devices_error = ir.async_get(self.hass).async_get_issue(
+                domain=DOMAIN,
+                issue_id="no_devices_found",
+            )
+            invalid_auth_error = ir.async_get(self.hass).async_get_issue(
+                domain=DOMAIN,
+                issue_id="invalid_auth",
+            )
+            await self.api.update()
+            if no_devices_error:
+                ir.async_delete_issue(self.hass, DOMAIN, no_devices_error.issue_id)
+            if invalid_auth_error:
+                ir.async_delete_issue(self.hass, DOMAIN, invalid_auth_error.issue_id)
+        except NoDevicesFoundException:
+            raise_no_devices_found(self.hass, self.config_entry)
+        except InvalidOAuthConfigurationException:
+            raise_invalid_auth(self.hass, self.config_entry)
 
 type NintendoParentalConfigEntry = ConfigEntry[NintendoUpdateCoordinator]

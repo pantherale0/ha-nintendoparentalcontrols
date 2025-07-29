@@ -1,7 +1,7 @@
 """Custom integration to integrate nintendo_parental with Home Assistant."""
 from __future__ import annotations
 
-from pynintendoparental import Authenticator
+from pynintendoparental.authenticator import Authenticator
 from pynintendoparental.exceptions import (
     InvalidOAuthConfigurationException,
     InvalidSessionTokenException,
@@ -14,6 +14,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import CONF_SESSION_TOKEN, DOMAIN
 from .coordinator import NintendoParentalConfigEntry, NintendoUpdateCoordinator
+from .repairs import raise_invalid_auth
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH, Platform.TIME, Platform.NUMBER]
 
@@ -30,6 +31,7 @@ async def async_setup_entry(
             client_session=async_get_clientsession(hass),
         )
     except (InvalidSessionTokenException, InvalidOAuthConfigurationException) as err:
+        raise_invalid_auth(hass, entry)
         raise ConfigEntryError(
             translation_domain=DOMAIN,
             translation_key="auth_expired",
