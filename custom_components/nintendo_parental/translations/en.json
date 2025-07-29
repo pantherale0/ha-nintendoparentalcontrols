@@ -52,7 +52,6 @@
       "fields": {
         "bonus_time": {
           "description": "The amount of bonus time to add in minutes. Maximum is 1440 minutes, minimum is -1. Use -1 for no further time limit.",
-          "example": 30,
           "name": "Bonus Time"
         },
         "device_id": {
