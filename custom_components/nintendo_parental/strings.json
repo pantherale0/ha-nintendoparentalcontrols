@@ -38,11 +38,11 @@
       "title": "Mobile application has been updated"
     },
     "invalid_auth": {
-      "description": "The stored authentication token is invalid. Please reconfigure the integration.",
+      "description": "The stored authentication token for {account_id} is invalid. Please reconfigure the integration.",
       "title": "Invalid authentication"
     },
     "no_devices_found": {
-      "description": "No devices were found for this account. Please ensure that the account has a Nintendo Switch linked to it and that the parental controls are set up correctly.",
+      "description": "No devices were found for {account_id}. Please ensure that the account has a Nintendo Switch linked to it and that the parental controls are set up correctly.",
       "title": "No devices found"
     }
   }
