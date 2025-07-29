@@ -46,19 +46,13 @@ class NintendoUpdateCoordinator(DataUpdateCoordinator[None]):
     async def _async_update_data(self) -> None:
         """Update data from Nintendo's API."""
         try:
-            no_devices_error = ir.async_get(self.hass).async_get_issue(
-                domain=DOMAIN,
-                issue_id="no_devices_found",
-            )
-            invalid_auth_error = ir.async_get(self.hass).async_get_issue(
-                domain=DOMAIN,
-                issue_id="invalid_auth",
-            )
+            issue_registry = ir.async_get(self.hass)
+            issue_ids_to_track = ["no_devices_found", "invalid_auth"]
             await self.api.update()
-            if no_devices_error:
-                ir.async_delete_issue(self.hass, DOMAIN, no_devices_error.issue_id)
-            if invalid_auth_error:
-                ir.async_delete_issue(self.hass, DOMAIN, invalid_auth_error.issue_id)
+            for issue_id in issue_ids_to_track:
+                issue = issue_registry.async_get_issue(domain=DOMAIN, issue_id=issue_id)
+                if issue:
+                    ir.async_delete_issue(self.hass, DOMAIN, issue.issue_id)
         except NoDevicesFoundException:
             raise_no_devices_found(self.hass, self.config_entry)
         except InvalidOAuthConfigurationException:
