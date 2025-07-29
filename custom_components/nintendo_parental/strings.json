@@ -1,41 +1,49 @@
 {
-    "issues": {
-        "dependancy_needs_updating": {
-            "title": "Mobile application has been updated",
-            "description": "A change has occured to the OAuth authentication method used by the Nintendo Switch Parental Controls mobile app.\n\nThis issue is not resolvable, please use the learn more link to report this issue to the maintainer."
-        },
-        "configuration_error": {
-            "title": "Error setting up {name}",
-            "description": "There was a problem with the response from Nintendo for this device, check the logs for further information.\n\nThis can occur due to a config issue with the parental control settings.\n\nBefore reporting this issue, make sure that debug mode has been turned on and reload the integration."
-        }
+  "config": {
+    "abort": {
+      "already_configured": "Account is already configured"
     },
-    "config": {
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
+    },
     "step": {
       "user": {
-        "description": "To obtain your access token, click [Nintendo Login]({link}) to sign in to your Nintendo account. Then, for the account you want to link, right-click on the red **Select this person** button and choose **Copy Link Address**.",
         "data": {
           "api_token": "Access token"
         },
         "data_description": {
           "api_token": "The link copied from the Nintendo website"
-        }
+        },
+        "description": "To obtain your access token, click [Nintendo Login]({link}) to sign in to your Nintendo account. Then, for the account you want to link, right-click on the red **Select this person** button and choose **Copy Link Address**."
       }
-    },
-    "error": {
-            "cannot_connect": "Failed to connect",
-            "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error"
-        },
-    "abort": {
-            "already_configured": "Account is already configured"
-        }
-  },
-    "exceptions": {
-        "bedtime_alarm_out_of_range": {
-            "message": "Invalid time provided, expected between 16:00 and 23:59. Got {time}"
-        },
-        "play_time_limit_out_of_range": {
-            "message": "Play Time Limit cannot be more than 6 hours. To lock the switch, set to 0, to disable screen time limits, set to -1."
-        }
     }
+  },
+  "exceptions": {
+    "bedtime_alarm_out_of_range": {
+      "message": "Invalid time provided, expected between 16:00 and 23:59. Got {time}"
+    },
+    "play_time_limit_out_of_range": {
+      "message": "Play Time Limit cannot be more than 6 hours. To lock the switch, set to 0, to disable screen time limits, set to -1."
+    }
+  },
+  "issues": {
+    "configuration_error": {
+      "description": "There was a problem with the response from Nintendo for this device, check the logs for further information.\n\nThis can occur due to a config issue with the parental control settings.\n\nBefore reporting this issue, make sure that debug mode has been turned on and reload the integration.",
+      "title": "Error setting up {name}"
+    },
+    "dependancy_needs_updating": {
+      "description": "A change has occured to the OAuth authentication method used by the Nintendo Switch Parental Controls mobile app.\n\nThis issue is not resolvable, please use the learn more link to report this issue to the maintainer.",
+      "title": "Mobile application has been updated"
+    },
+    "invalid_auth": {
+      "description": "The stored authentication token for {account_id} is invalid. Please reconfigure the integration.",
+      "title": "Invalid authentication"
+    },
+    "no_devices_found": {
+      "description": "No devices were found for {account_id}. Please ensure that the account has a Nintendo Switch linked to it and that the parental controls are set up correctly.",
+      "title": "No devices found"
+    }
+  }
 }

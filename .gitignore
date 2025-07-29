@@ -12,6 +12,7 @@ __pycache__
 coverage.xml
 
 .env
+.venv
 
 # Home Assistant configuration
 config/*
