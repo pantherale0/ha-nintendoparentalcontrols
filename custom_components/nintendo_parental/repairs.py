@@ -12,9 +12,7 @@ def raise_no_devices_found(hass: HomeAssistant, config_entry: ConfigEntry) -> No
         hass=hass,
         domain=DOMAIN,
         issue_id="no_devices_found",
-        is_fixable=False,
-        is_persistent=False,
-        severity=ir.IssueSeverity.WARNING,
+        is_persistent=True,
         translation_key="no_devices_found",
         translation_placeholders={
             "account_id": config_entry.title
