@@ -1,0 +1,10 @@
+site_name: Nintendo Switch Parental Controls
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+site_url: https://pantherale0.github.io/ha-nintendoparentalcontrols
+plugins:
+  - search
+  - awesome-pages
