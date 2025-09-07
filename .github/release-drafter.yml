@@ -1,0 +1,47 @@
+include-pre-releases: true
+categories:
+  - title: Breaking Changes 🛠
+    labels:
+      - breaking-change
+  - title: 'New Features 🎉'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: 'Bug Fixes 🛠'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: 'Documentation'
+    labels:
+      - 'docs'
+  - title: '👒 Dependencies and extras'
+    collapse-after: 3
+    labels:
+      - 'chore'
+      - 'dependencies'
+exclude-labels:
+  - 'ignore-for-release'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&'
+autolabeler:
+  - label: 'docs'
+    branch:
+      - '/docs{0,1}\/.+/'
+  - label: 'chore'
+    files:
+      - '*.md'
+      - '*.yml'
+    branch:
+      - '/docs{0,1}\/.+/'
+      - '/chore\/.+/'
+  - label: 'bug'
+    branch:
+      - '/fix\/.+/'
+  - label: 'enhancement'
+    branch:
+      - '/feature\/.+/'
+template: |
+  ## Changes
+
+  $CHANGES

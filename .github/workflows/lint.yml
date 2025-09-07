@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "main"
+    paths-ignore:
+      - "docs/**"
+      - ".github/**"
   pull_request:
     branches:
       - "main"
@@ -14,10 +17,10 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout the repository"
-        uses: "actions/checkout@v5.0.0"
+        uses: "actions/checkout@v4.1.0"
 
       - name: "Set up Python"
-        uses: actions/setup-python@v5.6.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: "3.13"
           cache: "pip"
