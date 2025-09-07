@@ -14,4 +14,4 @@ To get started, your Switch will already need to be paired with the Nintendo Swi
 
 ## Support
 
-If you encounter any issues or have questions, please open an issue on the [GitHub repository](https://github.com/pantheraleo/ha-nintendoparentalcontrols).
+If you encounter any issues or have questions, please open an issue on the [GitHub repository](https://github.com/pantherale0/ha-nintendoparentalcontrols).
