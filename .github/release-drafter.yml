@@ -33,7 +33,6 @@ autolabeler:
       - '*.md'
       - '*.yml'
     branch:
-      - '/docs{0,1}\/.+/'
       - '/chore\/.+/'
   - label: 'bug'
     branch:

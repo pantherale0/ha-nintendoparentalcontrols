@@ -11,7 +11,7 @@ changelog:
         - enhancement
     - title: Bug Fixes 🛠
       labels:
-        - bug-fix
+        - bug
     - title: 👒 Dependencies
       labels:
         - dependencies
