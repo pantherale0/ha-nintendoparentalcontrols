@@ -27,7 +27,7 @@ jobs:
           export CALVER=$(date "+%Y.%-m")
           echo "version=${CALVER}" >> $GITHUB_OUTPUT
           echo "Version set to ${CALVER}"
-      - uses: release-drafter/release-drafter@v6.0.0
+      - uses: release-drafter/release-drafter@v6.1.0
         with:
           name: ${{ steps.calver.outputs.version }}
           tag: ${{ steps.calver.outputs.version }}
