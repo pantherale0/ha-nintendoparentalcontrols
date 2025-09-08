@@ -30,7 +30,7 @@ jobs:
           zip nintendo_parental.zip -r ./
 
       - name: "Upload the ZIP file to the release"
-        uses: softprops/action-gh-release@v2.3.2
+        uses: softprops/action-gh-release@v2.3.3
         with:
           files: ${{ github.workspace }}/custom_components/nintendo_parental/nintendo_parental.zip
           tag_name: ${{ github.event.release.tag_name }}
