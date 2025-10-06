@@ -9,6 +9,10 @@
 
 _Integration to integrate with [ha-nintendoparentalcontrols][ha-nintendoparentalcontrols]._
 
+## NOTICE
+
+This integration will soon be available in Home Assistant core, therefore, this specific custom component will no longer receive updates.
+
 **This integration will set up the following platforms.**
 
 | Platform | Description                                       |
