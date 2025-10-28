@@ -44,6 +44,10 @@
     "no_devices_found": {
       "description": "No devices were found for {account_id}. Please ensure that the account has a Nintendo Switch linked to it and that the parental controls are set up correctly.",
       "title": "No devices found"
+    },
+    "integration_deprecated": {
+      "description": "The HACS Nintendo Switch Parental Controls custom integration has been deprecated. A core integration has been created in its place and the configuration has already been migrated. Please remove the custom integration from your configuration.",
+      "title": "Custom Integration Removed"
     }
   },
   "services": {
