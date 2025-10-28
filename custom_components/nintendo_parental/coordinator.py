@@ -5,13 +5,10 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 
-from pynintendoparental import NintendoParental
 from pynintendoparental.authenticator import Authenticator
-from pynintendoparental.exceptions import InvalidOAuthConfigurationException, NoDevicesFoundException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN
