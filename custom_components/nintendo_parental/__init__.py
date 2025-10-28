@@ -42,5 +42,5 @@ async def async_migrate_entry(
                     subentries_data=entry.subentries,
                 )
             )
-        hass.config_entries.async_remove(entry.entry_id)
-        return True
+            hass.config_entries.async_update_entry(entry=entry, version=2)
+    return True
