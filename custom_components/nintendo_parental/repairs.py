@@ -17,6 +17,6 @@ def raise_integration_deprecated(hass: HomeAssistant, config_entry: ConfigEntry)
         translation_placeholders={
             "account_id": config_entry.title
         },
-        is_fixable=True,
+        is_fixable=False,
         severity=ir.IssueSeverity.ERROR,
     )
