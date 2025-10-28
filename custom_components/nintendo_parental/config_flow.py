@@ -21,6 +21,8 @@ _LOGGER = logging.getLogger(__name__)
 class NintendoConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Nintendo Switch Parental Controls."""
 
+    VERSION = 2
+
     def __init__(self) -> None:
         """Initialize a new config flow instance."""
         self.auth: Authenticator | None = None

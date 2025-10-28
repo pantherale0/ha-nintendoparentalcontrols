@@ -7,6 +7,7 @@ from pynintendoparental.exceptions import (
     InvalidSessionTokenException,
 )
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError
@@ -59,3 +60,26 @@ async def async_unload_entry(
 ) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+async def async_migrate_entry(
+    hass: HomeAssistant, entry: NintendoParentalConfigEntry
+) -> bool:
+    """Migrate old entry."""
+    if entry.version == 1:
+        new_entry = hass.config_entries.async_entry_for_domain_unique_id("nintendo_parental_controls", entry.unique_id)
+        if new_entry is None:
+            await hass.config_entries.async_add(
+                ConfigEntry(
+                    version=1,
+                    domain="nintendo_parental_controls",
+                    title=entry.title,
+                    data=entry.data,
+                    options=entry.options,
+                    source=entry.source,
+                    unique_id=entry.unique_id,
+                    discovery_keys=entry.discovery_keys,
+                    minor_version=entry.minor_version,
+                    subentries_data=entry.subentries,
+                )
+            )
+        return hass.config_entries.async_remove(entry.entry_id)
