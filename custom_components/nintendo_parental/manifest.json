@@ -1,9 +1,6 @@
 {
   "domain": "nintendo_parental",
   "name": "Nintendo Switch Parental Controls",
-  "after_dependencies": [
-    "http"
-  ],
   "codeowners": [
     "@pantherale0"
   ],
@@ -11,11 +8,6 @@
   "documentation": "https://github.com/pantherale0/ha-nintendoparentalcontrols",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/pantherale0/ha-nintendoparentalcontrols/issues",
-  "loggers": [
-    "pynintendoparental"
-  ],
-  "requirements": [
-    "pynintendoparental==1.0.5"
-  ],
+  "requirements": [],
   "version": "0.0.0"
 }

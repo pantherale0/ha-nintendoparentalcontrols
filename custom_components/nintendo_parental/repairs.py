@@ -6,30 +6,17 @@ from homeassistant.helpers import issue_registry as ir
 
 from .const import DOMAIN
 
-def raise_no_devices_found(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
-    """Create an issue if no devices are found."""
+def raise_integration_deprecated(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    """Create an issue for the integration deprecation."""
     ir.async_create_issue(
         hass=hass,
         domain=DOMAIN,
-        issue_id="no_devices_found",
-        is_persistent=True,
-        translation_key="no_devices_found",
-        translation_placeholders={
-            "account_id": config_entry.title
-        }
-    )
-
-def raise_invalid_auth(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
-    """Create an issue if the auth is invalid."""
-    ir.async_create_issue(
-        hass=hass,
-        domain=DOMAIN,
-        issue_id="invalid_auth",
-        is_fixable=False,
+        issue_id="integration_deprecated",
         is_persistent=False,
-        severity=ir.IssueSeverity.ERROR,
-        translation_key="invalid_auth",
+        translation_key="integration_deprecated",
         translation_placeholders={
             "account_id": config_entry.title
-        }
+        },
+        is_fixable=False,
+        severity=ir.IssueSeverity.ERROR,
     )
